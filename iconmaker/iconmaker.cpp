@@ -2,27 +2,33 @@
 
 int main()
 {
-  pngwriter png(64, 64, 1.0, "/home/mac568/4414-hw1/controller/files/test.png");
+  // specifies which folder to drop the icon in 
+  // end of the path name is the icon name 
+  pngwriter png(64, 64, 1.0, "/home/mac568/Smart-Traffic-Lights/controller/files/test.png");
 
-  png.filledsquare(0, 29, 63, 35, 1.0, 0.0, 0.0);
+  // horizontal street 
+  png.filledsquare(1, 29, 64, 35, 1.0, 0.0, 0.0);
 
-  png.line(0, 60, 60, 0, 1.0, 0.0, 0.0);
-  png.line(0, 61, 61, 0, 1.0, 0.0, 0.0);
-  png.line(0, 62, 62, 0, 1.0, 0.0, 0.0);
-  png.line(0, 63, 63, 0, 1.0, 0.0, 0.0);
+  // TL to BR diagonal street 
+  png.line(1, 61, 61, 1, 1.0, 0.0, 0.0);
+  png.line(1, 62, 62, 1, 1.0, 0.0, 0.0);
   png.line(1, 63, 63, 1, 1.0, 0.0, 0.0);
-  png.line(2, 63, 63, 2, 1.0, 0.0, 0.0);
-  png.line(3, 63, 63, 3, 1.0, 0.0, 0.0);
+  png.line(1, 64, 64, 1, 1.0, 0.0, 0.0);
+  png.line(2, 64, 64, 2, 1.0, 0.0, 0.0);
+  png.line(3, 64, 64, 3, 1.0, 0.0, 0.0);
+  png.line(4, 64, 64, 4, 1.0, 0.0, 0.0);
 
-  png.filledsquare(29, 0, 35, 63, 0.0, 1.0, 0.0);
+  // vertical street 
+  png.filledsquare(29, 1, 35, 64, 0.0, 1.0, 0.0); 
 
-  png.line(0, 3, 60, 63, 0.0, 1.0, 0.0);
-  png.line(0, 2, 61, 63, 0.0, 1.0, 0.0);
-  png.line(0, 1, 62, 63, 0.0, 1.0, 0.0);
-  png.line(0, 0, 63, 63, 0.0, 1.0, 0.0);
-  png.line(1, 0, 63, 62, 0.0, 1.0, 0.0);
-  png.line(2, 0, 63, 61, 0.0, 1.0, 0.0);
-  png.line(3, 0, 63, 60, 0.0, 1.0, 0.0);
+  // TR to BL diagonal street 
+  png.line(1, 4, 61, 64, 0.0, 1.0, 0.0);
+  png.line(1, 3, 62, 64, 0.0, 1.0, 0.0);
+  png.line(1, 2, 63, 64, 0.0, 1.0, 0.0);
+  png.line(1, 1, 64, 64, 0.0, 1.0, 0.0);
+  png.line(2, 1, 64, 63, 0.0, 1.0, 0.0);
+  png.line(3, 1, 64, 62, 0.0, 1.0, 0.0);
+  png.line(4, 1, 64, 61, 0.0, 1.0, 0.0);
 
   png.close();
 
