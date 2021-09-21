@@ -8,6 +8,7 @@ using namespace std;
 
 // GLOBAL FUNCTION DEFINITIONS 
 string pathMaker(string combo) {
+  //  ../controller/files
   string pathToFiles = "/home/mac568/Smart-Traffic-Lights/controller/files/";
   string prefix = "i";  
   string suffix = ".png"; 
@@ -49,11 +50,11 @@ string pathMaker(string combo) {
 // }
 
 // draws a horizontal street on a 64x64 canvas 
-void drawHorizontal(pngwriter png, string color) {
-  if (color == "r") {
+void drawHorizontal(pngwriter &png, char color) {
+  if (color == 'r') {
     png.filledsquare(1, 29, 64, 35, 1.0, 0.0, 0.0);
   }
-  else if (color == "g") {
+  else if (color == 'g') {
     png.filledsquare(1, 29, 64, 35, 0.0, 1.0, 0.0);
   }
   else {
@@ -62,8 +63,8 @@ void drawHorizontal(pngwriter png, string color) {
 }
 
 // draws a TL to BR diagonal street on a 64x64 canvas 
-void drawTLtoBR(pngwriter png, string color) {
-  if (color == "r") {
+void drawTLtoBR(pngwriter &png, char color) {
+  if (color == 'r') {
     png.line(1, 61, 61, 1, 1.0, 0.0, 0.0);
     png.line(1, 62, 62, 1, 1.0, 0.0, 0.0);
     png.line(1, 63, 63, 1, 1.0, 0.0, 0.0);
@@ -72,7 +73,7 @@ void drawTLtoBR(pngwriter png, string color) {
     png.line(3, 64, 64, 3, 1.0, 0.0, 0.0);
     png.line(4, 64, 64, 4, 1.0, 0.0, 0.0);
   }
-  else if (color == "g") {
+  else if (color == 'g') {
     png.line(1, 61, 61, 1, 0.0, 1.0, 0.0);
     png.line(1, 62, 62, 1, 0.0, 1.0, 0.0);
     png.line(1, 63, 63, 1, 0.0, 1.0, 0.0);
@@ -93,11 +94,11 @@ void drawTLtoBR(pngwriter png, string color) {
 }
 
 // draws a vertical street on a 64x64 canvas 
-void drawVertical(pngwriter png, string color) {
-  if (color == "r") {
+void drawVertical(pngwriter &png, char color) {
+  if (color == 'r') {
     png.filledsquare(29, 1, 35, 64, 1.0, 0.0, 0.0); 
   }
-  else if (color == "g") {
+  else if (color == 'g') {
     png.filledsquare(29, 1, 35, 64, 0.0, 1.0, 0.0); 
   }
   else {
@@ -106,8 +107,8 @@ void drawVertical(pngwriter png, string color) {
 }
 
 // draws a TR to BL diagonal street on a 64x64 canvas 
-void drawTRtoBL(pngwriter png, string color) {
-  if (color == "r") {
+void drawTRtoBL(pngwriter &png, char color) {
+  if (color == 'r') {
     png.line(1, 4, 61, 64, 1.0, 0.0, 0.0);
     png.line(1, 3, 62, 64, 1.0, 0.0, 0.0);
     png.line(1, 2, 63, 64, 1.0, 0.0, 0.0);
@@ -116,7 +117,7 @@ void drawTRtoBL(pngwriter png, string color) {
     png.line(3, 1, 64, 62, 1.0, 0.0, 0.0);
     png.line(4, 1, 64, 61, 1.0, 0.0, 0.0);
   }
-  else if (color == "g") {
+  else if (color == 'g') {
     png.line(1, 4, 61, 64, 0.0, 1.0, 0.0);
     png.line(1, 3, 62, 64, 0.0, 1.0, 0.0);
     png.line(1, 2, 63, 64, 0.0, 1.0, 0.0);
@@ -145,6 +146,8 @@ vector<string> combosOfFour;  // Citation: https://stackoverflow.com/questions/7
 
 int main()
 {  
+  // GENERATING ALL OF THE STREET LIGHT COMBINATIONS
+
   // Light combinations for 2 streets 
   for (int i=0; i<3; i++) {
     string color1 = colorChars[i]; 
@@ -178,13 +181,13 @@ int main()
         for (int p=0; p<3; p++) {
           string color4 = colorChars[p]; 
           string combo = color1 + color2 + color3 + color4; 
-          combosOfThree.push_back(combo); 
+          combosOfFour.push_back(combo); 
         }
       }
     } 
   }
 
-  // pngwriter png(64, 64, 1.0, "/home/mac568/Smart-Traffic-Lights/controller/files/test.png");
+  // DRAWING ALL OF THE ICONS AND DROPPING THEM INTO FILES FOLDER 
 
   for (int i=0; i<9; i++) {
     string combo = combosOfTwo[i]; 
@@ -238,7 +241,7 @@ int main()
       else if (j==2) {
         drawVertical(png, combo[j]); 
       }
-      else if (j==4) {
+      else {
         drawTRtoBL(png, combo[j]); 
       }
     }
@@ -246,5 +249,7 @@ int main()
     png.close(); 
   }
 
+
+  cout << "I did it!"; 
   return 0;
 }
