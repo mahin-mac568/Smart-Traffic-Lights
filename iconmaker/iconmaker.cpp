@@ -7,47 +7,17 @@ using namespace std;
 
 
 // GLOBAL FUNCTION DEFINITIONS 
+
+// returns the file path for the icons' destination, in string form 
 string pathMaker(string combo) {
-  //  ../controller/files
+  //  adjust the file path to start with `../controller/files`
   string pathToFiles = "/home/mac568/Smart-Traffic-Lights/controller/files/";
   string prefix = "i";  
   string suffix = ".png"; 
+
   string stringPath = pathToFiles + prefix + combo + suffix; 
- 
   return stringPath; 
 }
-
-// // draws a horizontal street on a 64x64 canvas 
-// void drawHorizontal(pngwriter png) {
-//   png.filledsquare(1, 29, 64, 35, 1.0, 0.0, 0.0);
-// }
-
-// // draws a TL to BR diagonal street on a 64x64 canvas 
-// void drawTLtoBR(pngwriter png) {
-//   png.line(1, 61, 61, 1, 1.0, 0.0, 0.0);
-//   png.line(1, 62, 62, 1, 1.0, 0.0, 0.0);
-//   png.line(1, 63, 63, 1, 1.0, 0.0, 0.0);
-//   png.line(1, 64, 64, 1, 1.0, 0.0, 0.0);
-//   png.line(2, 64, 64, 2, 1.0, 0.0, 0.0);
-//   png.line(3, 64, 64, 3, 1.0, 0.0, 0.0);
-//   png.line(4, 64, 64, 4, 1.0, 0.0, 0.0);
-// }
-
-// // draws a vertical street on a 64x64 canvas 
-// void drawVertical(pngwriter png) {
-//   png.filledsquare(29, 1, 35, 64, 0.0, 1.0, 0.0); 
-// }
-
-// // draws a TR to BL diagonal street on a 64x64 canvas 
-// void drawTRtoBL(pngwriter png) {
-//   png.line(1, 4, 61, 64, 0.0, 1.0, 0.0);
-//   png.line(1, 3, 62, 64, 0.0, 1.0, 0.0);
-//   png.line(1, 2, 63, 64, 0.0, 1.0, 0.0);
-//   png.line(1, 1, 64, 64, 0.0, 1.0, 0.0);
-//   png.line(2, 1, 64, 63, 0.0, 1.0, 0.0);
-//   png.line(3, 1, 64, 62, 0.0, 1.0, 0.0);
-//   png.line(4, 1, 64, 61, 0.0, 1.0, 0.0);
-// }
 
 // draws a horizontal street on a 64x64 canvas 
 void drawHorizontal(pngwriter &png, char color) {
@@ -137,7 +107,7 @@ void drawTRtoBL(pngwriter &png, char color) {
   }
 }
 
-// GLOBAL VARIABLES 
+// GLOBAL ARRAYS
 vector<string> colorChars { "r", "g", "y" }; 
 vector<string> combosOfTwo;               
 vector<string> combosOfThree; 
@@ -189,6 +159,7 @@ int main()
 
   // DRAWING ALL OF THE ICONS AND DROPPING THEM INTO FILES FOLDER 
 
+  // drawing the combinations for 2 streets 
   for (int i=0; i<9; i++) {
     string combo = combosOfTwo[i]; 
     string path = pathMaker(combo);             
@@ -206,6 +177,7 @@ int main()
     png.close(); 
   }
 
+  // drawing the combinations for 3 streets 
   for (int i=0; i<27; i++) {
     string combo = combosOfThree[i]; 
     string path = pathMaker(combo);             
@@ -226,6 +198,7 @@ int main()
     png.close(); 
   }
 
+  // drawing the combinations for 4 streets 
   for (int i=0; i<81; i++) {
     string combo = combosOfFour[i]; 
     string path = pathMaker(combo);             
@@ -249,7 +222,6 @@ int main()
     png.close(); 
   }
 
-
-  cout << "I did it!"; 
+  cout << "I did it!" << endl; 
   return 0;
 }
