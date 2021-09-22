@@ -1030,7 +1030,7 @@ void pngwriter::line(int xfrom, int yfrom, int xto, int yto, int red, int green,
       this->plot(xfrom, yfrom, red, green, blue);
     }
   }
-}
+} 
 
 void pngwriter::line(int xfrom, int yfrom, int xto, int yto, double red, double green, double blue)
 {
