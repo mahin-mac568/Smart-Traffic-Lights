@@ -1,13 +1,23 @@
 #pragma once
+#include <string>
+using namespace std; 
+
 
 class TrafficLight {
 
-public: 
-  
+  public: 
+    TrafficLight(string, string, string, string); 
+    void cycleLight(char); 
 
-private:
+  private:
+    char currentLight; 
+    string street1; 
+    string street2; 
+    string street3; 
+    string street4; 
 
 }; 
+
 
 class TrafficController {
 
