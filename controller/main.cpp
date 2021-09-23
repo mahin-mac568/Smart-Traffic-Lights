@@ -13,7 +13,7 @@ vector<string> allCNNs = sf.GetColumn<string>("CNN");
 vector<string> relevantCNNs; 
 vector<TrafficLight> allTLs; 
 
-int main() {
+int main(int argc, char *argv[]) {
 
   // Collecting all of the relevant cnn values 
   for (int i=0; i<sizeof(allCNNs); i++) {
@@ -24,21 +24,29 @@ int main() {
   } 
 
   // Iterating through all of the relevant rows to collect street names 
+  // Instantiating TrafficLight objects 
   for (int i=0; i<sizeof(relevantCNNs); i++) {
+    // Get streets 1 and 2, and instantiate with them  
     string street1 = sf.GetCell<string>("STREET1", relevantCNNs[i]);
     string street2 = sf.GetCell<string>("STREET2", relevantCNNs[i]);
+    TrafficLight newTL(street1, 1, 'r'); 
+    TrafficLight newTL(street2, 2, 'r');
+
     string street3; 
     string street4; 
 
+    // Check if streets 3 and 4 are empty or not 
+    // if not, assign them and instantiate with them 
     if (!(sf.GetCell<string>("STREET3", relevantCNNs[i])).empty()) {
       street3 = sf.GetCell<string>("STREET3", relevantCNNs[i]);
+      TrafficLight newTL(street3, 3, 'r'); 
     } 
 
     if (!(sf.GetCell<string>("STREET4", relevantCNNs[i])).empty()) {
       street4 = sf.GetCell<string>("STREET4", relevantCNNs[i]);
+      TrafficLight newTL(street4, 4, 'r'); 
     } 
 
-    TrafficLight newTL(street1, street2, street3, street4); 
     allTLs.push_back(newTL); 
   }
 

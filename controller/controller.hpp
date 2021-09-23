@@ -6,24 +6,26 @@ using namespace std;
 class TrafficLight {
 
   public: 
-    TrafficLight(string, string, string, string); 
-    void cycleLight(char); 
+    TrafficLight(string, int, char); 
 
   private:
-    char currentLight; 
-    string street1; 
-    string street2; 
-    string street3; 
-    string street4; 
+    string streetName; 
+    int streetNumber; 
+    char lightColor; 
 
 }; 
 
 
 class TrafficController {
 
-  public:
-
+  public: 
+    TrafficController(string, string, string, string); 
+    void cycleLight(); 
 
   private:
+    tuple <string, char> street1;
+    tuple <string, char> street2;
+    tuple <string, char> street3;
+    tuple <string, char> street4;
 
 }; 
