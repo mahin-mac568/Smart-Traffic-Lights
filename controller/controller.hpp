@@ -21,7 +21,7 @@ class TrafficLight {
     // SETTERS 
     void setStreetName(string);  // Setter for traffic light's street name   
     void setStreetNumber(int);   // Setter for traffic light's street number  
-    // void setCount(int);          // Setter for traffic light's current color
+    void setCount(int);          // Setter for traffic light's current color
     void setColor(char);         // Setter for traffic light's current color 
 
   private:

@@ -61,6 +61,8 @@ void TrafficLight::setStreetNumber(int stnum) {
   streetNumber = stnum; 
 }
 
+// void TrafficLight::setCount(int)
+
 // Setter for the traffic light's current color 
 void TrafficLight::setColor(char color) {
   currentColor = color; 
@@ -72,20 +74,16 @@ TrafficController::TrafficController(TrafficLight tL1,TrafficLight tL2)
 }
 
 
-TrafficController::TrafficController(TrafficLight tL1, 
-                                     TrafficLight tL2, 
+TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2, 
                                      TrafficLight tL3) 
-                                     : trafficLight1(tL1), trafficLight2(tL2), trafficLight3(tL3)
+                                     : trafficLight1(tL1), trafficLight2(tL2), 
+                                       trafficLight3(tL3) 
 { 
 }
 
-TrafficController::TrafficController(TrafficLight tL1, 
-                                     TrafficLight tL2, 
-                                     TrafficLight tL3,
-                                     TrafficLight tL4) 
+TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2, 
+                                     TrafficLight tL3, TrafficLight tL4) 
+                                     : trafficLight1(tL1), trafficLight2(tL2), 
+                                       trafficLight3(tL3), trafficLight4(tL4)
 {
-  trafficLight1 = tL1; 
-  trafficLight1 = tL2; 
-  trafficLight1 = tL3;  
-  trafficLight1 = tL4; 
 }

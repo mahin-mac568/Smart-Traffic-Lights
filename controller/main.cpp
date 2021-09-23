@@ -11,7 +11,7 @@ rapidcsv::Document sf("/home/mac568/Smart-Traffic-Lights/controller/Traffic_Sign
 // Global Vectors  
 vector<string> allCNNs = sf.GetColumn<string>("CNN"); 
 vector<string> relevantCNNs; 
-vector<TrafficLight> allTrafLights; // if I want the changes to the controller's vector of lights, 
+// vector<TrafficLight> allTrafLights; // if I want the changes to the controller's vector of lights, 
                                     // I should pass in the reference to the global lights 
 vector<TrafficController> allTCs; 
 
@@ -42,9 +42,11 @@ int main(int argc, char *argv[]) {
     string street3;  // initalize string for street 3 in case it exists 
     string street4;  // initalize string for street 4 in case it exists
 
-    // instantiate traffic light objects for streets 1 and 2 
+    // instantiate traffic light objects 
     TrafficLight trafLight1(street1, 1, k++); 
     TrafficLight trafLight2(street2, 2, k++);
+    TrafficLight trafLight3; 
+    TrafficLight trafLight4; 
 
     // add the traffic light objects to the traffic lights array   
     allTrafLights.push_back(trafLight1); 
@@ -54,18 +56,16 @@ int main(int argc, char *argv[]) {
     // if they are non-empty, assign them, instantiate with them, append 
     if (!(sf.GetCell<string>("STREET3", relevantCNNs[i])).empty()) {
       street3 = sf.GetCell<string>("STREET3", relevantCNNs[i]);
-      TrafficLight trafLight3(street3, 3, k++); 
-      allTrafLights.push_back(trafLight3);  // exists at allTrafLights[k-1]
+      trafLight3 = TrafficLight(street3, 3, k++); 
     } 
     if (!(sf.GetCell<string>("STREET4", relevantCNNs[i])).empty()) {
       street4 = sf.GetCell<string>("STREET4", relevantCNNs[i]);
-      TrafficLight trafLight4(street4, 4, k++); 
-      allTrafLights.push_back(trafLight4);  // exists at allTrafLights[k-2]
+      trafLight4 = TrafficLight(street4, 4, k++); 
     } 
 
     // Instantiate the traffic controllers 
     if (!street3.empty() && !street4.empty()) {
-      TrafficController tc((trafLight1), trafLight2, allTrafLights[k-1], allTrafLights[k-2]); 
+      TrafficController tc(trafLight1, trafLight2, allTrafLights[k-1], allTrafLights[k-2]); 
     }
     else if (!street3.empty()) {
       TrafficController tc(trafLight1, trafLight2, allTrafLights[k-1]); 
