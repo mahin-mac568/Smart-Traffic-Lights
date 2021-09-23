@@ -6,19 +6,31 @@
 
 using namespace std; 
 
-TrafficLight::TrafficLight(string name, int num, char color='r') {
-  streetName = name; 
-  streetNumber = num; 
+// Constructs one traffic light, 
+// Has street name, number, count, cycle time, and current light color 
+TrafficLight::TrafficLight(string stname, int stnum, int k, char color) {
+  streetName = stname;    
+  streetNumber = stnum;   // the order of the street at its intersection 
+  currentColor = color;   // defaults to red, will change as cycling occurs 
 
-  switch (streetNumber) {
-    case 1:
-      // color = 'g'; 
-    case 2: 
-      // color = 'r'; 
-    case 3:
-      
-    case 4: 
+  if ((k%25) == 0) {
+    cycleTime = 90; 
   }
+  else if ((k%25) < 15) {
+    cycleTime = 60;
+  }
+  else {
+    cycleTime = 30; 
+  }
+
+  if (streetNumber == 1) {  // may or may not need this, leave it for now 
+    currentColor = 'g'; 
+  }
+}
+
+// Setter for the traffic light's current color 
+void TrafficLight::setColor(char color) {
+  currentColor = color; 
 }
 
 TrafficController::TrafficController(string st1="", string st2="", 
