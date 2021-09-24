@@ -1,4 +1,6 @@
+#include "Light.hpp"
 #include "controller.hpp"
+#include "Event.hpp"
 #include "rapidcsv.h"
 #include <iostream>
 #include <string>
@@ -26,7 +28,7 @@ vector<TrafficController*> allTCs;
 int k; 
 
 // Priority queue to keep track of the light cycles 
-priority_queue<Event,vector<Event>, EventOperator> eventQueue; 
+priority_queue<Event, vector<Event>, EventOperator> eventQueue; 
 
 // Main function 
 int main(int argc, char *argv[]) {
@@ -70,7 +72,7 @@ int main(int argc, char *argv[]) {
       trafLight4 = TrafficLight(street4, 4, k++); 
     } 
 
-    // Instantiate the traffic controllers 
+    // Instantiate the traffic controllers, push them to TC vector 
     if (!street3.empty() && !street4.empty()) {
       TrafficController tc(trafLight1, trafLight2, trafLight3, trafLight4); 
       allTCs.push_back(&tc); 
@@ -85,11 +87,13 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  // Instantiate events using all traffic controller, push events to queue 
   for (int i=0; i<sizeof(allTCs); i++) {
-    Event newEvent(allTCs[i], allTCs[i].cycleLights(0)); 
+    Event newEvent(allTCs[i], (*allTCs[i]).cycleLights(0)); 
     eventQueue.push(newEvent); 
   }
 
+  // Simulate time, cycle the lights while popping and pushing to queue appropriately 
   for (int i; i<=t; i++) {
     Event topEvent = eventQueue.top(); 
     if (i == topEvent.getTime()) {
