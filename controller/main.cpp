@@ -6,19 +6,27 @@
 
 using namespace std; 
 
+// Comparator to pass into the priority queue 
+class EventOperator {
+  public:
+    bool operator() (Event e1, Event e2) {
+      return e1.getTime() > e2.getTime(); 
+    }
+}; 
+
 // Reading the CSV file provided by San Francisco (using rapidcsv.h) 
 rapidcsv::Document sf("/home/mac568/Smart-Traffic-Lights/controller/Traffic_Signals_SF.csv");
 
 // Global Vectors  
 vector<string> allCNNs = sf.GetColumn<string>("CNN"); 
 vector<string> relevantCNNs; 
-vector<TrafficController> allTCs; 
+vector<TrafficController*> allTCs; 
 
 // Counter, increment right before instantiating a traffic light and pass it in 
 int k; 
 
 // Priority queue to keep track of the light cycles 
-priority_queue<Event> eventQueue; 
+priority_queue<Event,vector<Event>, EventOperator> eventQueue; 
 
 // Main function 
 int main(int argc, char *argv[]) {
@@ -37,6 +45,7 @@ int main(int argc, char *argv[]) {
 
   // Iterating through all of the relevant rows to collect street names 
   // Instantiating TrafficLight objects with those stnames, stnums, and count 
+  // Using the TrafficLight objects to instantiate TrafficController objects 
   for (int i=0; i<sizeof(relevantCNNs); i++) {
     // street strings 
     string street1 = sf.GetCell<string>("STREET1", relevantCNNs[i]);
@@ -50,7 +59,6 @@ int main(int argc, char *argv[]) {
     TrafficLight trafLight3;    // initalize object for street 3 in case it exists 
     TrafficLight trafLight4;    // initalize object for street 4 in case it exists
     
-
     // check if streets 3 and 4 are empty or not 
     // if they are non-empty, assign them, instantiate with them, append 
     if (!(sf.GetCell<string>("STREET3", relevantCNNs[i])).empty()) {
@@ -65,36 +73,31 @@ int main(int argc, char *argv[]) {
     // Instantiate the traffic controllers 
     if (!street3.empty() && !street4.empty()) {
       TrafficController tc(trafLight1, trafLight2, trafLight3, trafLight4); 
-      allTCs.push_back(tc); 
+      allTCs.push_back(&tc); 
     }
     else if (!street3.empty()) {
       TrafficController tc(trafLight1, trafLight2, trafLight3); 
-      allTCs.push_back(tc); 
+      allTCs.push_back(&tc); 
     }
     else {
       TrafficController tc(trafLight1, trafLight2); 
-      allTCs.push_back(tc); 
+      allTCs.push_back(&tc); 
     }
   }
 
-  // Push all event objects to the priority queue 
   for (int i=0; i<sizeof(allTCs); i++) {
-    vector<int> switchTimes = allTCs[i].nextActionTimes(t); 
-    for (int j=0; j<sizeof(switchTimes); j++) {
-      Event event(allTCs[i], switchTimes[j]); 
-      eventQueue.push(event); 
-    }
+    Event newEvent(allTCs[i], allTCs[i].cycleLights(0)); 
+    eventQueue.push(newEvent); 
   }
 
-  // Process the items in the event queue 
-  int timeNextAction = eventQueue.top().getTime(); 
-  while (t - timeNextAction) > 0) {
-      Event poppedEvent = eventQueue.pop(); 
-      poppedEvent.getTC().switchLight(); 
-      if (eventQueue.top().getTime() != timeNextAction) {
-        t -= timeNextAction; 
-        timeNextAction = eventQueue.top().getTime(); 
-      }
+  for (int i; i<=t; i++) {
+    Event topEvent = eventQueue.top(); 
+    if (i == topEvent.getTime()) {
+      eventQueue.pop();
+      int newActionTime = (*(topEvent.getTC())).cycleLights(i); 
+      Event newEvent(topEvent.getTC(), newActionTime);  
+      eventQueue.push(newEvent); 
+    }
   }
 
   return 0; 

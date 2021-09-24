@@ -2,6 +2,7 @@
   "files.associations": {
     "lec1": "markdown",
     "string": "cpp",
-    "tuple": "cpp"
+    "tuple": "cpp",
+    "iostream": "cpp"
   }
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <tuple>
+#include <vector>
 
 using namespace std; 
 
@@ -16,7 +17,7 @@ class TrafficLight {
     string getStreetName();  // Getter for traffic light's street name   
     int getStreetNumber();   // Getter for traffic light's street number   
     char getCurrentColor();  // Getter for traffic light's current color 
-    int getCycleTime();      // Getter for traffic light's cycle time   
+    int getGreenCycle();      // Getter for traffic light's cycle time   
 
     // SETTERS 
     // void setStreetName(string);  // Setter for traffic light's street name   
@@ -29,8 +30,8 @@ class TrafficLight {
     int streetNumber;     // either STREET1, STREET2, STREET3, or STREET4
     char currentColor;    // what the light color currently is 
 
-    int cycleTime;        // the green-cycle for this traffic light 
-                          // cycleTime is not passed into the constructor 
+    int greenCycle;        // the green-cycle for this traffic light 
+                          // greenCycle is not passed into the constructor 
 }; 
 
 // Controls all traffic lights for one intersection 
@@ -49,8 +50,7 @@ class TrafficController {
                       TrafficLight,
                       TrafficLight); 
 
-    void switchLight(int); 
-    vector<int> nextActionTimes(int); 
+    int cycleLights(int); 
 
   private:
     TrafficLight trafficLight1; 
@@ -64,9 +64,11 @@ class Event {
   
   public:
     Event(TrafficController*, int); // pass reference of TC to the event
+    int getTime();                  // Getter for time until next event 
+    TrafficController* getTC();     // Getter for event traffic controller  
 
   private: 
-    TrafficController *tc; 
-    int time; 
+    TrafficController* tc;  // pointer to TC object 
+    int time;               // time until next event 
     
 }; 
