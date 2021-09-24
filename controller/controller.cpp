@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <tuple>
+#include <bits/stdc++.h>
 
 using namespace std; 
 
@@ -52,14 +53,14 @@ int TrafficLight::getCycleTime() {
 }
 
 // // Setter for traffic light's street name   
-void TrafficLight::setStreetName(string stname) {
-  streetName = stname; 
-}
+// void TrafficLight::setStreetName(string stname) {
+//   streetName = stname; 
+// }
 
-// Setter for traffic light's street number  
-void TrafficLight::setStreetNumber(int stnum) {
-  streetNumber = stnum; 
-}
+// // Setter for traffic light's street number  
+// void TrafficLight::setStreetNumber(int stnum) {
+//   streetNumber = stnum; 
+// }
 
 // void TrafficLight::setCount(int)
 
@@ -71,6 +72,8 @@ void TrafficLight::setColor(char color) {
 TrafficController::TrafficController(TrafficLight tL1,TrafficLight tL2)
                                     : trafficLight1(tL1), trafficLight2(tL2) 
 {
+  intersection.push_back(tL1); 
+  intersection.push_back(tL2); 
 }
 
 
@@ -79,6 +82,9 @@ TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2,
                                      : trafficLight1(tL1), trafficLight2(tL2), 
                                        trafficLight3(tL3) 
 { 
+  intersection.push_back(tL1); 
+  intersection.push_back(tL2);
+  intersection.push_back(tL3);
 }
 
 TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2, 
@@ -86,4 +92,33 @@ TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2,
                                      : trafficLight1(tL1), trafficLight2(tL2), 
                                        trafficLight3(tL3), trafficLight4(tL4)
 {
+  intersection.push_back(tL1); 
+  intersection.push_back(tL2);
+  intersection.push_back(tL3);
+  intersection.push_back(tL4);
+}
+
+void TrafficController::switchLight(int t) {
+  
+}
+
+vector<int> TrafficController::nextActionTimes(int t) {
+  // If the TL is green, then check the TL's time cycle to see when it 
+  // needs to turn yellow. If the time is that time, then turn the TL's
+  // light into yellow. Then output the next time stamp for when the yellow
+  // needs to be switched to a red. 
+
+  // It might be a good idea to not pass in a TL object into this function. 
+  // Instead, just let this function access the private vector of traffic 
+  // lights that exist at this intersection, and figure out the time stamps
+  // for every light. 
+
+  vector<int> switchTimes;  
+  
+  for (int i=0; i<sizeof(intersection); i++) {
+    int t_nextAction = t - intersection[i].getCycleTime();
+    switchTimes.push_back(t_nextAction); 
+  }
+
+  return switchTimes;
 }

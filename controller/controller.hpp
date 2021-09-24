@@ -19,9 +19,9 @@ class TrafficLight {
     int getCycleTime();      // Getter for traffic light's cycle time   
 
     // SETTERS 
-    void setStreetName(string);  // Setter for traffic light's street name   
-    void setStreetNumber(int);   // Setter for traffic light's street number  
-    void setCount(int);          // Setter for traffic light's current color
+    // void setStreetName(string);  // Setter for traffic light's street name   
+    // void setStreetNumber(int);   // Setter for traffic light's street number  
+    // void setCount(int);          // Setter for traffic light's current color
     void setColor(char);         // Setter for traffic light's current color 
 
   private:
@@ -49,12 +49,24 @@ class TrafficController {
                       TrafficLight,
                       TrafficLight); 
 
-    void cycleLight(); 
+    void switchLight(int); 
+    vector<int> nextActionTimes(int); 
 
   private:
     TrafficLight trafficLight1; 
     TrafficLight trafficLight2; 
     TrafficLight trafficLight3; 
     TrafficLight trafficLight4; 
+    vector<TrafficLight> intersection; 
+}; 
 
+class Event {
+  
+  public:
+    Event(TrafficController*, int); // pass reference of TC to the event
+
+  private: 
+    TrafficController *tc; 
+    int time; 
+    
 }; 
