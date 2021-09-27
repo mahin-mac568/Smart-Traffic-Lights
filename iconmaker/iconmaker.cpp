@@ -11,11 +11,14 @@ using namespace std;
 // returns the file path for the icons' destination, in string form 
 string pathMaker(string combo) {
   //  adjust the file path to start with `../controller/files`
-  string pathToFiles = "/home/mac568/Smart-Traffic-Lights/controller/files/";
+  
+
+  string pathToFiles = "../controller/files/";
   string prefix = "i";  
+  string comboLen = to_string(combo.length()); 
   string suffix = ".png"; 
 
-  string stringPath = pathToFiles + prefix + combo + suffix; 
+  string stringPath = pathToFiles + prefix + comboLen + combo + suffix; 
   return stringPath; 
 }
 
@@ -116,37 +119,6 @@ vector<string> combosOfFour;  // Citation: https://stackoverflow.com/questions/7
 
 int main()
 {  
-  // first put all combo names as file names in another txt file 
-  // ofstream myicons; 
-  // string prefix = "i";  
-  // string suffix = ".png"; 
-  // string comma = ", "; 
-
-  // for (int i=0; i<9; i++) {
-  //   string combo = combosOfTwo[i]; 
-  //   string filename = prefix + combo + suffix + comma; 
-  //   myicons.open("myicons.txt");
-  //   myicons << filename; 
-  //   myicons.close(); 
-  // }
-  
-  // for (int i=0; i<27; i++) {
-  //   string combo = combosOfThree[i]; 
-  //   string filename = prefix + combo + suffix + comma; 
-  //   myicons.open("myicons.txt");
-  //   myicons << filename; 
-  //   myicons.close();
-  // } 
-
-  // for (int i=0; i<81; i++) {
-  //   string combo = combosOfFour[i]; 
-  //   string filename = prefix + combo + suffix + comma; 
-  //   myicons.open("myicons.txt");
-  //   myicons << filename; 
-  //   myicons.close();
-  // }
-
-
   // GENERATING ALL OF THE STREET LIGHT COMBINATIONS
 
   // Light combinations for 2 streets 

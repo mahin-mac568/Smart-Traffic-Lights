@@ -35,13 +35,16 @@ priority_queue<Event, vector<Event>, EventOperator> eventQueue;
 // Main function 
 int main(int argc, char *argv[]) {
 
+  // vector<string> test = sf.GetRow<string>(0); 
+  // cout << test.at(0); 
+
   // Grabbing ahold of the time variable, argv[1] contains "-t=<num>"
   string arg = argv[1];                         
   int t = stoi(arg.substr(arg.find("=")+1)); 
 
   // Collecting all of the relevant cnn values (to identify relevant rows)
   for (int i=0; i<allCNNs.size(); i++) {
-    int rowNum = i+2; 
+    int rowNum = i; 
     auto gpsCell = sf.GetCell<string>("TBC", rowNum);
 
     if (gpsCell == "GPS") {
@@ -118,14 +121,7 @@ int main(int argc, char *argv[]) {
   // Prepare output csv file 
   ofstream csv;
   csv.open("myfile.csv"); 
-  csv << "CNN, Street Name, Color,\n"; 
-
-  // Prepare output kml file 
-  ofstream kml; 
-  kml.open("myfile.kml"); 
-  kml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"; 
-  kml << "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n"; 
-  kml << "<Document>\n"; 
+  csv << "CNN, Street Name, Color\n"; 
 
   // Write the final light states to a csv file 
   for (int i; i<allTCs.size(); i++) {
@@ -133,7 +129,14 @@ int main(int argc, char *argv[]) {
   }  
   csv.close(); 
 
-  // Write the final light states to a km file 
+  // Prepare output kml file 
+  ofstream kml; 
+  kml.open("myfile.kml"); 
+  kml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"; 
+  kml << "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n"; 
+  kml << "<Document>\n\n"; 
+
+  // Write the final light states to a kml file 
   string prefix = "i"; 
   string suffix = ".png";
   for (int i=0; i<allTCs.size(); i++) {
@@ -169,11 +172,11 @@ int main(int argc, char *argv[]) {
         cout << "Wrong number of traffic lights"; 
       }
     }
- 
-    string iconName = prefix + combo; 
-    string fileName = prefix + combo + suffix; 
+  
+    string comboLen = to_string(combo.length()); 
+    string iconName = prefix + comboLen + combo; 
+    string fileName = prefix + comboLen + combo + suffix; 
 
-    // kml.open("myfile.kml"); // ?? 
     kml << " <Style id=\"" << iconName << "\">\n"; 
     kml << "  <IconStyle id=\"" << iconName << "\">\n"; 
     kml << "   <Icon>\n"; 
@@ -186,7 +189,11 @@ int main(int argc, char *argv[]) {
     int rowNum = relevantRowNums[i];
     string cnn = relevantCNNs[i]; 
     auto shapeCell = sf.GetCell<string>("shape", rowNum);
-    string coordNums = shapeCell.substr(shapeCell.find("(")+1, shapeCell.find(")")-1); 
+
+    int fstIdx = shapeCell.find("(")+1; 
+    int sndIdx = shapeCell.find(")"); 
+    int strLen = sndIdx - fstIdx; 
+    string coordNums = shapeCell.substr(shapeCell.find("(")+1, strLen); 
     string coord1 = coordNums.substr(0, coordNums.find(" ")); 
     string coord2 = coordNums.substr(coordNums.find(" ")+1); 
 
@@ -197,12 +204,12 @@ int main(int argc, char *argv[]) {
     kml << "  <Point>\n"; 
     kml << "   <coordinates>" << coord1 << "," << coord2 << "</coordinates>\n"; 
     kml << "  </Point>\n"; 
-    kml << " </Placemark>"; 
+    kml << " </Placemark>\n\n"; 
   }
 
   // Footnotes for kml file, close the file 
   kml << "</Document>\n"; 
-  kml << "</kml>\n"; 
+  kml << "</kml>"; 
   kml.close(); 
 
   return 0; 

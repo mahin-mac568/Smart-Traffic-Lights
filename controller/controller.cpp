@@ -205,7 +205,8 @@ int TrafficController::cycleLights(int t) {
   }
 }
 
-void TrafficController::writecsv(ofstream &myfile) {
+void TrafficController::writecsv(ofstream& myfile) {
+  cout << "Writing to csv" << endl; 
   for (int i=0; i<intersection.size(); i++) {
     intersection[i].csv_helper(myfile);       // intersection[i] is one TL 
   }

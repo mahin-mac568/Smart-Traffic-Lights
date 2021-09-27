@@ -64,7 +64,7 @@ void TrafficLight::setColor(char color) {
 }
 
 // Write this traffic light's information as one row to the output csv file
-void TrafficLight::csv_helper(ofstream &myfile) {
+void TrafficLight::csv_helper(ofstream& myfile) {
   string colorInCaps; 
 
   if (currentColor == 'g') {
@@ -78,7 +78,6 @@ void TrafficLight::csv_helper(ofstream &myfile) {
   }
 
   string newRow = cnn + "," + streetName + "," + colorInCaps + "\n"; 
-  myfile.open("myfile.csv"); 
   myfile << newRow; 
-  myfile.close(); 
+  // cout << newRow; 
 } 
