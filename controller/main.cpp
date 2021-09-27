@@ -14,13 +14,12 @@ using namespace std;
 // Reading the CSV file provided by San Francisco (using rapidcsv.h) 
 rapidcsv::Document sf("/home/mac568/Smart-Traffic-Lights/controller/Traffic_Signals_SF.csv");
 
-// Global Vectors  
+// Global   
 vector<string> allCNNs = sf.GetColumn<string>("CNN"); 
+vector<int> relevantRowNums; 
 vector<string> relevantCNNs; 
 vector<TrafficController> allTCs; 
-
-// Counter, increment right before instantiating a traffic light and pass it in 
-int k; 
+int k;  // Counter, increment right before instantiating a traffic light and pass it in 
 
 // Comparator to pass into the priority queue 
 class EventOperator {
@@ -36,29 +35,17 @@ priority_queue<Event, vector<Event>, EventOperator> eventQueue;
 // Main function 
 int main(int argc, char *argv[]) {
 
-  // OUTPUT FILES (preparation)
-  // Prepare output csv file 
-  ofstream myfile;
-  myfile.open("myfile.csv"); 
-  myfile << "CNN, Street Name, Color,\n"; 
-  myfile.close(); // ??
-
-  // Prepare output kml file 
-  ofstream kml; 
-  kml.open("myfile.kml"); 
-  kml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"; 
-  kml << "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n"; 
-  kml << "<Document>\n"; 
-  kml.close(); // ??
-
-  // Grab ahold of the time variable, argv[1] contains "-t=<num>"
-  string arg = argv[1];                               
-  int t = std::stoi(arg.substr(arg.find("=")+1)); 
+  // Grabbing ahold of the time variable, argv[1] contains "-t=<num>"
+  string arg = argv[1];                         
+  int t = stoi(arg.substr(arg.find("=")+1)); 
 
   // Collecting all of the relevant cnn values (to identify relevant rows)
   for (int i=0; i<allCNNs.size(); i++) {
-    auto gpsCell = sf.GetCell<string>("TBC", allCNNs[i]);
+    int rowNum = i+2; 
+    auto gpsCell = sf.GetCell<string>("TBC", rowNum);
+
     if (gpsCell == "GPS") {
+      relevantRowNums.push_back(rowNum); 
       relevantCNNs.push_back(allCNNs[i]); 
     }
   } 
@@ -68,11 +55,12 @@ int main(int argc, char *argv[]) {
   // Using the TrafficLight objects to instantiate TrafficController objects 
   for (int i=0; i<relevantCNNs.size(); i++) {
     // cnn number, convert it from string to int 
+    int rowNum = relevantRowNums[i]; 
     string cnn = relevantCNNs[i]; 
 
     // street strings 
-    string street1 = sf.GetCell<string>("STREET1", relevantCNNs[i]);
-    string street2 = sf.GetCell<string>("STREET2", relevantCNNs[i]);
+    string street1 = sf.GetCell<string>("STREET1", rowNum);
+    string street2 = sf.GetCell<string>("STREET2", rowNum);
     string street3;             // initalize string for street 3 in case it exists 
     string street4;             // initalize string for street 4 in case it exists
 
@@ -84,12 +72,12 @@ int main(int argc, char *argv[]) {
     
     // check if streets 3 and 4 are empty or not 
     // if they are non-empty, assign them, instantiate with them, append 
-    if (!(sf.GetCell<string>("STREET3", relevantCNNs[i])).empty()) {
-      street3 = sf.GetCell<string>("STREET3", relevantCNNs[i]);
+    if (!(sf.GetCell<string>("STREET3", rowNum)).empty()) {
+      street3 = sf.GetCell<string>("STREET3", rowNum);
       trafLight3 = TrafficLight(cnn, street3, 3, k++); 
     } 
-    if (!(sf.GetCell<string>("STREET4", relevantCNNs[i])).empty()) {
-      street4 = sf.GetCell<string>("STREET4", relevantCNNs[i]);
+    if (!(sf.GetCell<string>("STREET4", rowNum)).empty()) {
+      street4 = sf.GetCell<string>("STREET4", rowNum);
       trafLight4 = TrafficLight(cnn, street4, 4, k++); 
     } 
 
@@ -126,24 +114,96 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  // Write the final light states to a csv files 
-  // for (int i; i<allTCs.size(); i++) {
-  //   allTCs[i].writecsv(myfile); 
-  // }  
+  // OUTPUT FILES (preparation)
+  // Prepare output csv file 
+  ofstream csv;
+  csv.open("myfile.csv"); 
+  csv << "CNN, Street Name, Color,\n"; 
 
-  /* Write the final light states to the kml file 
-  * for all TCs 
-  *  start a string for the color combo of the intersection 
-  *  for all the TLs in the intersection 
-  *    check the color of the TL 
-  *    concat that string to the color combo 
-  *  based on the color combo, create a file name using "i" and ".png"
-  *  paste in the template for one pushpin in kml, plug in the file name
-  * 
-  *  grab the shape cell from the input csv and parse out the numbers 
-  *  paste in the coordinate part of the pushpin, plug in the cnn and coords 
-  *
-  *  write the entire pushpin to the output kml file */ 
+  // Prepare output kml file 
+  ofstream kml; 
+  kml.open("myfile.kml"); 
+  kml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"; 
+  kml << "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n"; 
+  kml << "<Document>\n"; 
+
+  // Write the final light states to a csv file 
+  for (int i; i<allTCs.size(); i++) {
+    allTCs[i].writecsv(csv); 
+  }  
+  csv.close(); 
+
+  // Write the final light states to a km file 
+  string prefix = "i"; 
+  string suffix = ".png";
+  for (int i=0; i<allTCs.size(); i++) {
+    string combo; 
+    string streetNames; 
+
+    vector<TrafficLight> lights = allTCs[i].getAllLights(); 
+    int numLights = lights.size(); 
+
+    for (int j=0; j<numLights; j++) {
+      char color = lights[j].getCurrentColor(); 
+      combo += color; 
+      string name = lights[j].getStreetName(); 
+      if (numLights==2 && j==0) {
+        streetNames += name + " ";
+      }
+      else if (numLights==2 && j==1) {
+        streetNames += "and " + name; 
+      }
+      else if (numLights==3 && (j==0 || j==1)) {
+        streetNames += name+", "; 
+      }
+      else if (numLights==3 && j==2) {
+        streetNames += "and " + name;
+      }
+      else if (numLights==4 && (j==0 || j==1 || j==2)) {
+        streetNames += name+", "; 
+      }
+      else if (numLights==4 && j==3) {
+        streetNames += "and " + name;
+      }
+      else {
+        cout << "Wrong number of traffic lights"; 
+      }
+    }
+ 
+    string iconName = prefix + combo; 
+    string fileName = prefix + combo + suffix; 
+
+    // kml.open("myfile.kml"); // ?? 
+    kml << " <Style id=\"" << iconName << "\">\n"; 
+    kml << "  <IconStyle id=\"" << iconName << "\">\n"; 
+    kml << "   <Icon>\n"; 
+    kml << "    <href>files/" << fileName << "</href>\n"; 
+    kml << "    <scale>1.0</scale>\n";  
+    kml << "   </Icon>\n"; 
+    kml << "  </IconStyle>\n"; 
+    kml << " </Style>\n"; 
+      
+    int rowNum = relevantRowNums[i];
+    string cnn = relevantCNNs[i]; 
+    auto shapeCell = sf.GetCell<string>("shape", rowNum);
+    string coordNums = shapeCell.substr(shapeCell.find("(")+1, shapeCell.find(")")-1); 
+    string coord1 = coordNums.substr(0, coordNums.find(" ")); 
+    string coord2 = coordNums.substr(coordNums.find(" ")+1); 
+
+    kml << " <Placemark>\n"; 
+    kml << "  <name>" + cnn << "</name>\n"; 
+    kml << "  <description>" << streetNames << "</description>\n";
+    kml << "  <styleUrl>#" << iconName << "</styleUrl>\n"; 
+    kml << "  <Point>\n"; 
+    kml << "   <coordinates>" << coord1 << "," << coord2 << "</coordinates>\n"; 
+    kml << "  </Point>\n"; 
+    kml << " </Placemark>"; 
+  }
+
+  // Footnotes for kml file, close the file 
+  kml << "</Document>\n"; 
+  kml << "</kml>\n"; 
+  kml.close(); 
 
   return 0; 
 }

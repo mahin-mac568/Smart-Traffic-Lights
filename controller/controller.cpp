@@ -62,9 +62,13 @@ TrafficLight TrafficController::getTL4() {
   return trafficLight4; 
 }
 
+vector<TrafficLight> TrafficController::getAllLights() {
+  return intersection; 
+}
+
 // Cycles lights appropriately depending on the previous color 
 int TrafficController::cycleLights(int t) {
-  int len = sizeof(intersection); 
+  int len = intersection.size(); 
   
   if (len == 2) {
     // change street 1 to green at t=0 
@@ -201,8 +205,8 @@ int TrafficController::cycleLights(int t) {
   }
 }
 
-// void TrafficController::writecsv(ofstream myfile) {
-//   for (int i=0; i<intersection.size(); i++) {
-//     intersection[i].csv_helper(myfile);       // intersection[i] is one TL 
-//   }
-// }
+void TrafficController::writecsv(ofstream &myfile) {
+  for (int i=0; i<intersection.size(); i++) {
+    intersection[i].csv_helper(myfile);       // intersection[i] is one TL 
+  }
+}

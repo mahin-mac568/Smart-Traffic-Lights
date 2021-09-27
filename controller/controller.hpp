@@ -29,12 +29,13 @@ class TrafficController {
     TrafficLight getTL2(); 
     TrafficLight getTL3(); 
     TrafficLight getTL4(); 
+    vector<TrafficLight> getAllLights(); 
 
     // Light update function 
     int cycleLights(int); 
 
     // Write all traffic light states for this intersection to the csv 
-    void writecsv(ofstream); 
+    void writecsv(ofstream&); 
 
   private:
     TrafficLight trafficLight1; 
