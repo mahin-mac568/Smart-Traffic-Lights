@@ -2,9 +2,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 using namespace std; 
-
 
 // GLOBAL FUNCTION DEFINITIONS 
 
@@ -116,6 +116,37 @@ vector<string> combosOfFour;  // Citation: https://stackoverflow.com/questions/7
 
 int main()
 {  
+  // first put all combo names as file names in another txt file 
+  // ofstream myicons; 
+  // string prefix = "i";  
+  // string suffix = ".png"; 
+  // string comma = ", "; 
+
+  // for (int i=0; i<9; i++) {
+  //   string combo = combosOfTwo[i]; 
+  //   string filename = prefix + combo + suffix + comma; 
+  //   myicons.open("myicons.txt");
+  //   myicons << filename; 
+  //   myicons.close(); 
+  // }
+  
+  // for (int i=0; i<27; i++) {
+  //   string combo = combosOfThree[i]; 
+  //   string filename = prefix + combo + suffix + comma; 
+  //   myicons.open("myicons.txt");
+  //   myicons << filename; 
+  //   myicons.close();
+  // } 
+
+  // for (int i=0; i<81; i++) {
+  //   string combo = combosOfFour[i]; 
+  //   string filename = prefix + combo + suffix + comma; 
+  //   myicons.open("myicons.txt");
+  //   myicons << filename; 
+  //   myicons.close();
+  // }
+
+
   // GENERATING ALL OF THE STREET LIGHT COMBINATIONS
 
   // Light combinations for 2 streets 
@@ -161,8 +192,8 @@ int main()
 
   // drawing the combinations for 2 streets 
   for (int i=0; i<9; i++) {
-    string combo = combosOfTwo[i]; 
-    string path = pathMaker(combo);             
+    string combo = combosOfTwo[i]; // index the color combo 
+    string path = pathMaker(combo); // make the path name 
     pngwriter png(64, 64, 1.0, path.c_str());   // Citation: https://stackoverflow.com/questions/347949/how-to-convert-a-stdstring-to-const-char-or-char
 
     for (int j=0; j<2; j++) {
@@ -201,7 +232,7 @@ int main()
   // drawing the combinations for 4 streets 
   for (int i=0; i<81; i++) {
     string combo = combosOfFour[i]; 
-    string path = pathMaker(combo);             
+    string path = pathMaker(combo);    
     pngwriter png(64, 64, 1.0, path.c_str());   
 
     for (int j=0; j<4; j++) {

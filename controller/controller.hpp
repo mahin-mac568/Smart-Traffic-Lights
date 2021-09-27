@@ -3,6 +3,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <fstream>
 
 using namespace std; 
 
@@ -10,6 +11,7 @@ using namespace std;
 class TrafficController {
 
   public:     
+    // CONSTRUCTORS
     TrafficController(TrafficLight, 
                       TrafficLight); 
 
@@ -19,10 +21,20 @@ class TrafficController {
 
     TrafficController(TrafficLight, 
                       TrafficLight, 
-                      TrafficLight,
+                      TrafficLight, 
                       TrafficLight); 
 
+    // GETTERS 
+    TrafficLight getTL1(); 
+    TrafficLight getTL2(); 
+    TrafficLight getTL3(); 
+    TrafficLight getTL4(); 
+
+    // Light update function 
     int cycleLights(int); 
+
+    // Write all traffic light states for this intersection to the csv 
+    void writecsv(ofstream); 
 
   private:
     TrafficLight trafficLight1; 

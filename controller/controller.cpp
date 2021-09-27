@@ -3,12 +3,15 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 using namespace std; 
 
-// Constant values 
+// Constant Value
 const int yellowCycle = 10; 
 
+// CONSTRUCTORS 
+// Constructor for a two-street intersection  
 TrafficController::TrafficController(TrafficLight tL1,TrafficLight tL2)
                                     : trafficLight1(tL1), trafficLight2(tL2) 
 {
@@ -16,7 +19,7 @@ TrafficController::TrafficController(TrafficLight tL1,TrafficLight tL2)
   intersection.push_back(tL2); 
 }
 
-
+// Constructor for a three-street intersection  
 TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2, 
                                      TrafficLight tL3) 
                                      : trafficLight1(tL1), trafficLight2(tL2), 
@@ -27,6 +30,7 @@ TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2,
   intersection.push_back(tL3);
 }
 
+// Constructor for a four-street intersection  
 TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2, 
                                      TrafficLight tL3, TrafficLight tL4) 
                                      : trafficLight1(tL1), trafficLight2(tL2), 
@@ -38,6 +42,27 @@ TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2,
   intersection.push_back(tL4);
 }
 
+// Getter for traffic light 1 object
+TrafficLight TrafficController::getTL1() {
+  return trafficLight1; 
+}
+
+// Getter for traffic light 2 object
+TrafficLight TrafficController::getTL2() {
+  return trafficLight2; 
+}
+
+// Getter for traffic light 3 object
+TrafficLight TrafficController::getTL3() {
+  return trafficLight3; 
+}
+
+// Getter for traffic light 4 object
+TrafficLight TrafficController::getTL4() {
+  return trafficLight4; 
+}
+
+// Cycles lights appropriately depending on the previous color 
 int TrafficController::cycleLights(int t) {
   int len = sizeof(intersection); 
   
@@ -175,3 +200,9 @@ int TrafficController::cycleLights(int t) {
     return 1; 
   }
 }
+
+// void TrafficController::writecsv(ofstream myfile) {
+//   for (int i=0; i<intersection.size(); i++) {
+//     intersection[i].csv_helper(myfile);       // intersection[i] is one TL 
+//   }
+// }

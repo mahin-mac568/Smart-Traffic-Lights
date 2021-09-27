@@ -5,17 +5,17 @@
 using namespace std; 
 
 // Event Constructor 
-Event::Event(TrafficController* trafCont, int t) {
-  tc = trafCont; 
+Event::Event(int i, int t) {
+  tcIdx = i;                     
   time = t; 
+}
+
+// Getter for event traffic controller's index in allTCs global vector 
+int Event::getIdx() {
+  return tcIdx; 
 }
 
 // Getter for time until next event 
 int Event::getTime() {
   return time; 
-}
-
-// Getter for event traffic controller
-TrafficController* Event::getTC() {
-  return tc; 
 }

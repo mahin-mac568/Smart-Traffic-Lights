@@ -3,6 +3,9 @@
     "lec1": "markdown",
     "string": "cpp",
     "tuple": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "fstream": "cpp",
+    "vector": "cpp",
+    "*.tcc": "cpp"
   }
 }

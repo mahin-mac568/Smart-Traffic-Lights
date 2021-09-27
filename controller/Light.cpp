@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <fstream>
 
 using namespace std; 
 
@@ -11,7 +12,8 @@ TrafficLight::TrafficLight() {}
 
 // Constructs one traffic light, 
 // Has street name, number, count, cycle time, and current light color 
-TrafficLight::TrafficLight(string stname, int stnum, int k, char color) {
+TrafficLight::TrafficLight(string id, string stname, int stnum, int k, char color) {
+  cnn = id;               // the id number for the street 
   streetName = stname;    
   streetNumber = stnum;   // the order of the street at its intersection 
   currentColor = color;   // defaults to red, will change as cycling occurs 
@@ -26,14 +28,19 @@ TrafficLight::TrafficLight(string stname, int stnum, int k, char color) {
     greenCycle = 30; 
   }
 
-  if (streetNumber == 1) {  // may or may not need this, leave it for now 
-    currentColor = 'g'; 
-  }
+  // if (streetNumber == 1) {  // may or may not need this, leave it for now 
+  //   currentColor = 'g'; 
+  // }
+}
+
+// Getter for traffic light's id number 
+string TrafficLight::getCNN() {
+  return cnn;  
 }
 
 // Getter for traffic light's street name 
 string TrafficLight::getStreetName() {
-  return streetName; 
+  return streetName;  
 }
 
 // Getter for traffic light's street number 
@@ -55,3 +62,23 @@ int TrafficLight::getGreenCycle() {
 void TrafficLight::setColor(char color) {
   currentColor = color; 
 }
+
+// Write this traffic light's information as one row to the output csv file
+void TrafficLight::csv_helper(ofstream myfile) {
+  string colorInCaps; 
+
+  if (currentColor == 'g') {
+    colorInCaps = "GREEN"; 
+  }
+  else if (currentColor == 'r') {
+    colorInCaps = "RED"; 
+  }
+  else {
+    colorInCaps = "YELLOW"; 
+  }
+
+  string newRow = cnn + "," + streetName + "," + colorInCaps + "\n"; 
+  myfile.open("myfile.csv"); 
+  myfile << newRow; 
+  myfile.close(); 
+} 

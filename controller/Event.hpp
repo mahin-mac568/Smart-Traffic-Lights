@@ -7,12 +7,12 @@ using namespace std;
 class Event {
   
   public:
-    Event(TrafficController*, int); // pass reference of TC to the event
-    int getTime();                  // Getter for time until next event 
-    TrafficController* getTC();     // Getter for event traffic controller  
+    Event(int, int); 
+    int getIdx();           // Getter for TC index in allTCs global vector 
+    int getTime();          // Getter for time until next event 
 
   private: 
-    TrafficController* tc;  // pointer to TC object 
+    int tcIdx; 
     int time;               // time until next event 
-    
+        
 }; 
