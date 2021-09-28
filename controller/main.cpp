@@ -110,14 +110,18 @@ int main(int argc, char *argv[]) {
   }
 
   // Simulate time, cycle the lights while popping and pushing to queue appropriately 
-  for (int i; i<=t; i++) {
+  int i = 0; 
+  while (i < t) {
     Event topEvent = eventQueue.top(); 
     if (i == topEvent.getTime()) {
       eventQueue.pop();
       int tcIdx = topEvent.getIdx(); 
-      int newActionTime = allTCs[tcIdx].cycleLights(i); 
-      Event newEvent(tcIdx, newActionTime); 
+      int tNextAction = allTCs[tcIdx].cycleLights(i); 
+      Event newEvent(tcIdx, tNextAction); 
       eventQueue.push(newEvent); 
+    }
+    else {
+      i += 1; 
     }
   }
 
