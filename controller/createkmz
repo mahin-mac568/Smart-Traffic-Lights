@@ -1,0 +1,3 @@
+#!/bin/bash
+cd ../controller 
+zip myfile.kmz myfile.kml files/*
