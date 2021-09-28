@@ -19,7 +19,7 @@ vector<string> allCNNs = sf.GetColumn<string>("CNN");
 vector<int> relevantRowNums; 
 vector<string> relevantCNNs; 
 vector<TrafficController> allTCs; 
-int k;  // Counter, increment right before instantiating a traffic light and pass it in 
+int k=0;  // Counter, increment right before instantiating a traffic light and pass it in 
 
 // Comparator to pass into the priority queue 
 class EventOperator {
@@ -86,15 +86,15 @@ int main(int argc, char *argv[]) {
 
     // Instantiate the traffic controllers, push them to TC vector 
     if (!street3.empty() && !street4.empty()) {
-      TrafficController tc(trafLight1, trafLight2, trafLight3, trafLight4); 
+      TrafficController tc(&trafLight1, &trafLight2, &trafLight3, &trafLight4); 
       allTCs.push_back(tc); 
     }
     else if (!street3.empty()) {
-      TrafficController tc(trafLight1, trafLight2, trafLight3); 
+      TrafficController tc(&trafLight1, &trafLight2, &trafLight3); 
       allTCs.push_back(tc); 
     }
     else {
-      TrafficController tc(trafLight1, trafLight2); 
+      TrafficController tc(&trafLight1, &trafLight2); 
       allTCs.push_back(tc); 
     }
   }
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
   csv << "CNN, Street Name, Color\n"; 
 
   // Write the final light states to a csv file 
-  for (int i; i<allTCs.size(); i++) {
+  for (int i=0; i<allTCs.size(); i++) {
     allTCs[i].writecsv(csv); 
   }  
   csv.close(); 
@@ -143,13 +143,13 @@ int main(int argc, char *argv[]) {
     string combo; 
     string streetNames; 
 
-    vector<TrafficLight> lights = allTCs[i].getAllLights(); 
+    vector<TrafficLight*> lights = allTCs[i].getAllLights(); 
     int numLights = lights.size(); 
 
     for (int j=0; j<numLights; j++) {
-      char color = lights[j].getCurrentColor(); 
+      char color = (*lights[j]).getCurrentColor(); 
       combo += color; 
-      string name = lights[j].getStreetName(); 
+      string name = (*lights[j]).getStreetName(); 
       if (numLights==2 && j==0) {
         streetNames += name + " ";
       }

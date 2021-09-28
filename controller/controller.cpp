@@ -12,7 +12,7 @@ const int yellowCycle = 10;
 
 // CONSTRUCTORS 
 // Constructor for a two-street intersection  
-TrafficController::TrafficController(TrafficLight tL1,TrafficLight tL2)
+TrafficController::TrafficController(TrafficLight* tL1,TrafficLight* tL2)
                                     : trafficLight1(tL1), trafficLight2(tL2) 
 {
   intersection.push_back(tL1); 
@@ -20,8 +20,8 @@ TrafficController::TrafficController(TrafficLight tL1,TrafficLight tL2)
 }
 
 // Constructor for a three-street intersection  
-TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2, 
-                                     TrafficLight tL3) 
+TrafficController::TrafficController(TrafficLight* tL1, TrafficLight* tL2, 
+                                     TrafficLight* tL3) 
                                      : trafficLight1(tL1), trafficLight2(tL2), 
                                        trafficLight3(tL3) 
 { 
@@ -31,8 +31,8 @@ TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2,
 }
 
 // Constructor for a four-street intersection  
-TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2, 
-                                     TrafficLight tL3, TrafficLight tL4) 
+TrafficController::TrafficController(TrafficLight* tL1, TrafficLight* tL2, 
+                                     TrafficLight* tL3, TrafficLight* tL4) 
                                      : trafficLight1(tL1), trafficLight2(tL2), 
                                        trafficLight3(tL3), trafficLight4(tL4)
 {
@@ -43,62 +43,64 @@ TrafficController::TrafficController(TrafficLight tL1, TrafficLight tL2,
 }
 
 // Getter for traffic light 1 object
-TrafficLight TrafficController::getTL1() {
+TrafficLight* TrafficController::getTL1() {
   return trafficLight1; 
 }
 
 // Getter for traffic light 2 object
-TrafficLight TrafficController::getTL2() {
+TrafficLight* TrafficController::getTL2() {
   return trafficLight2; 
 }
 
 // Getter for traffic light 3 object
-TrafficLight TrafficController::getTL3() {
+TrafficLight* TrafficController::getTL3() {
   return trafficLight3; 
 }
 
 // Getter for traffic light 4 object
-TrafficLight TrafficController::getTL4() {
+TrafficLight* TrafficController::getTL4() {
   return trafficLight4; 
 }
 
-vector<TrafficLight> TrafficController::getAllLights() {
+vector<TrafficLight*> TrafficController::getAllLights() {
   return intersection; 
 }
 
 // Cycles lights appropriately depending on the previous color 
 int TrafficController::cycleLights(int t) {
-  int len = intersection.size(); 
+  int len = intersection.size();  
+  // trafficLight1.setColor('y');
+  // cout << "all lights yellow" << endl; 
   
   if (len == 2) {
     // change street 1 to green at t=0 
-    if (trafficLight1.getCurrentColor()=='r' &&  
-        trafficLight2.getCurrentColor()=='r') 
+    if ((*trafficLight1).getCurrentColor()=='r' &&  
+        (*trafficLight2).getCurrentColor()=='r') 
     {
-      trafficLight1.setColor('g'); 
-      return t + trafficLight1.getGreenCycle(); 
+      (*trafficLight1).setColor('g'); 
+      return t + (*trafficLight1).getGreenCycle(); 
     }
     // change street 1 to yellow
-    else if (trafficLight1.getCurrentColor() == 'g') {
-      trafficLight1.setColor('y');
+    else if ((*trafficLight1).getCurrentColor() == 'g') {
+      (*trafficLight1).setColor('y');
       return t + yellowCycle; 
     }
     // change street 1 to red, street 2 to green 
-    else if (trafficLight1.getCurrentColor() == 'y') {
-      trafficLight1.setColor('r');
-      trafficLight2.setColor('g');
-      return t + trafficLight2.getGreenCycle(); 
+    else if ((*trafficLight1).getCurrentColor() == 'y') {
+      (*trafficLight1).setColor('r');
+      (*trafficLight2).setColor('g');
+      return t + (*trafficLight2).getGreenCycle(); 
     }
     // change street 2 to yellow
-    else if (trafficLight2.getCurrentColor() == 'g') {
-      trafficLight2.setColor('y');
+    else if ((*trafficLight2).getCurrentColor() == 'g') {
+      (*trafficLight2).setColor('y');
       return t + yellowCycle; 
     }
     // change street 2 to red, street 1 back to green 
-    else if (trafficLight2.getCurrentColor() == 'y') {
-      trafficLight2.setColor('r');
-      trafficLight1.setColor('g');
-      return t + trafficLight1.getGreenCycle(); 
+    else if ((*trafficLight2).getCurrentColor() == 'y') {
+      (*trafficLight2).setColor('r');
+      (*trafficLight1).setColor('g');
+      return t + (*trafficLight1).getGreenCycle(); 
     }
     else {
       cout << "Traffic Controller has incorrect number of lights" << endl; 
@@ -107,40 +109,43 @@ int TrafficController::cycleLights(int t) {
   }
 
   else if (len == 3) {
+    // cout << "there are three TLs" << endl; 
     // change street 1 to green at t=0 
-    if (trafficLight1.getCurrentColor()=='r' &&  
-        trafficLight2.getCurrentColor()=='r' && 
-        trafficLight3.getCurrentColor()=='r') 
+    if ((*trafficLight1).getCurrentColor()=='r' &&  
+        (*trafficLight2).getCurrentColor()=='r' && 
+        (*trafficLight3).getCurrentColor()=='r') 
     {
-      trafficLight1.setColor('g');
-      return t + trafficLight1.getGreenCycle(); 
+      // cout << "they are all red" << endl; 
+      (*trafficLight1).setColor('g');
+      // cout << (*trafficLight1).getCurrentColor() << endl; 
+      return t + (*trafficLight1).getGreenCycle(); 
     }
-    else if (trafficLight1.getCurrentColor() == 'g') {
-      trafficLight1.setColor('y');
+    else if ((*trafficLight1).getCurrentColor() == 'g') {
+      (*trafficLight1).setColor('y');
       return t + yellowCycle; 
     }
-    else if (trafficLight1.getCurrentColor() == 'y') {
-      trafficLight1.setColor('r');
-      trafficLight2.setColor('g');
-      return t + trafficLight2.getGreenCycle(); 
+    else if ((*trafficLight1).getCurrentColor() == 'y') {
+      (*trafficLight1).setColor('r');
+      (*trafficLight2).setColor('g');
+      return t + (*trafficLight2).getGreenCycle(); 
     }
-    else if (trafficLight2.getCurrentColor() == 'g') {
-      trafficLight2.setColor('y');
+    else if ((*trafficLight2).getCurrentColor() == 'g') {
+      (*trafficLight2).setColor('y');
       return t + yellowCycle; 
     }
-    else if (trafficLight2.getCurrentColor() == 'y') {
-      trafficLight2.setColor('r');
-      trafficLight3.setColor('g');
-      return t + trafficLight3.getGreenCycle(); 
+    else if ((*trafficLight2).getCurrentColor() == 'y') {
+      (*trafficLight2).setColor('r');
+      (*trafficLight3).setColor('g');
+      return t + (*trafficLight3).getGreenCycle(); 
     }
-    else if (trafficLight3.getCurrentColor() == 'g') {
-      trafficLight3.setColor('y');
+    else if ((*trafficLight3).getCurrentColor() == 'g') {
+      (*trafficLight3).setColor('y');
       return t + yellowCycle; 
     }
-    else if (trafficLight3.getCurrentColor() == 'y') {
-      trafficLight3.setColor('r');
-      trafficLight1.setColor('g');
-      return t + trafficLight1.getGreenCycle(); 
+    else if ((*trafficLight3).getCurrentColor() == 'y') {
+      (*trafficLight3).setColor('r');
+      (*trafficLight1).setColor('g');
+      return t + (*trafficLight1).getGreenCycle(); 
     }
     else {
       cout << "Traffic Controller has incorrect number of lights" << endl; 
@@ -150,49 +155,49 @@ int TrafficController::cycleLights(int t) {
 
   else if (len == 4) {
     // change street 1 to green at t=0 
-    if (trafficLight1.getCurrentColor()=='r' &&  
-        trafficLight2.getCurrentColor()=='r' && 
-        trafficLight3.getCurrentColor()=='r' &&
-        trafficLight4.getCurrentColor()=='r') 
+    if ((*trafficLight1).getCurrentColor()=='r' &&  
+        (*trafficLight2).getCurrentColor()=='r' && 
+        (*trafficLight3).getCurrentColor()=='r' &&
+        (*trafficLight4).getCurrentColor()=='r') 
     {
-      trafficLight1.setColor('g');
-      return t + trafficLight1.getGreenCycle(); 
+      (*trafficLight1).setColor('g');
+      return t + (*trafficLight1).getGreenCycle(); 
     }
-    else if (trafficLight1.getCurrentColor() == 'g') {
-      trafficLight1.setColor('y');
+    else if ((*trafficLight1).getCurrentColor() == 'g') {
+      (*trafficLight1).setColor('y');
       return t + yellowCycle; 
     }
-    else if (trafficLight1.getCurrentColor() == 'y') {
-      trafficLight1.setColor('r');
-      trafficLight2.setColor('g');
-      return t + trafficLight2.getGreenCycle(); 
+    else if ((*trafficLight1).getCurrentColor() == 'y') {
+      (*trafficLight1).setColor('r');
+      (*trafficLight2).setColor('g');
+      return t + (*trafficLight2).getGreenCycle(); 
     }
-    else if (trafficLight2.getCurrentColor() == 'g') {
-      trafficLight2.setColor('y');
+    else if ((*trafficLight2).getCurrentColor() == 'g') {
+      (*trafficLight2).setColor('y');
       return t + yellowCycle; 
     }
-    else if (trafficLight2.getCurrentColor() == 'y') {
-      trafficLight2.setColor('r');
-      trafficLight3.setColor('g');
-      return t + trafficLight3.getGreenCycle(); 
+    else if ((*trafficLight2).getCurrentColor() == 'y') {
+      (*trafficLight2).setColor('r');
+      (*trafficLight3).setColor('g');
+      return t + (*trafficLight3).getGreenCycle(); 
     }
-    else if (trafficLight3.getCurrentColor() == 'g') {
-      trafficLight3.setColor('y');
+    else if ((*trafficLight3).getCurrentColor() == 'g') {
+      (*trafficLight3).setColor('y');
       return t + yellowCycle; 
     }
-    else if (trafficLight3.getCurrentColor() == 'y') {
-      trafficLight3.setColor('r');
-      trafficLight4.setColor('g');
-      return t + trafficLight4.getGreenCycle(); 
+    else if ((*trafficLight3).getCurrentColor() == 'y') {
+      (*trafficLight3).setColor('r');
+      (*trafficLight4).setColor('g');
+      return t + (*trafficLight4).getGreenCycle(); 
     }
-    else if (trafficLight4.getCurrentColor() == 'g') {
-      trafficLight4.setColor('y');
+    else if ((*trafficLight4).getCurrentColor() == 'g') {
+      (*trafficLight4).setColor('y');
       return t + yellowCycle; 
     }
-    else if (trafficLight4.getCurrentColor() == 'y') {
-      trafficLight4.setColor('r');
-      trafficLight1.setColor('g');
-      return t + trafficLight1.getGreenCycle(); 
+    else if ((*trafficLight4).getCurrentColor() == 'y') {
+      (*trafficLight4).setColor('r');
+      (*trafficLight1).setColor('g');
+      return t + (*trafficLight1).getGreenCycle(); 
     }
     else {
       cout << "Traffic Controller has incorrect number of lights" << endl; 
@@ -206,8 +211,19 @@ int TrafficController::cycleLights(int t) {
 }
 
 void TrafficController::writecsv(ofstream& myfile) {
-  cout << "Writing to csv" << endl; 
   for (int i=0; i<intersection.size(); i++) {
-    intersection[i].csv_helper(myfile);       // intersection[i] is one TL 
+    (*intersection.at(i)).csv_helper(myfile);       // intersection[i] is one TL 
   }
 }
+
+// int main () {
+//   TrafficLight tl1("225000", "LAKE", 1, 0); 
+//   TrafficLight tl2("225001", "POND", 2, 1); 
+//   TrafficLight tl3("225002", "ISLAND", 3, 2); 
+
+//   TrafficController tc(&tl1, &tl2, &tl3); 
+
+//   tc.cycleLights(90); 
+//   cout << tl1.getCurrentColor() << endl; 
+//   cout << (*tc.getAllLights().at(0)).getCurrentColor() << endl; 
+// }

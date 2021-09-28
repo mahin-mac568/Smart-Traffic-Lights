@@ -12,24 +12,24 @@ class TrafficController {
 
   public:     
     // CONSTRUCTORS
-    TrafficController(TrafficLight, 
-                      TrafficLight); 
+    TrafficController(TrafficLight*, 
+                      TrafficLight*); 
 
-    TrafficController(TrafficLight, 
-                      TrafficLight, 
-                      TrafficLight); 
+    TrafficController(TrafficLight*, 
+                      TrafficLight*, 
+                      TrafficLight*); 
 
-    TrafficController(TrafficLight, 
-                      TrafficLight, 
-                      TrafficLight, 
-                      TrafficLight); 
+    TrafficController(TrafficLight*, 
+                      TrafficLight*, 
+                      TrafficLight*, 
+                      TrafficLight*); 
 
     // GETTERS 
-    TrafficLight getTL1(); 
-    TrafficLight getTL2(); 
-    TrafficLight getTL3(); 
-    TrafficLight getTL4(); 
-    vector<TrafficLight> getAllLights(); 
+    TrafficLight* getTL1(); 
+    TrafficLight* getTL2(); 
+    TrafficLight* getTL3(); 
+    TrafficLight* getTL4(); 
+    vector<TrafficLight*> getAllLights(); 
 
     // Light update function 
     int cycleLights(int); 
@@ -38,9 +38,9 @@ class TrafficController {
     void writecsv(ofstream&); 
 
   private:
-    TrafficLight trafficLight1; 
-    TrafficLight trafficLight2; 
-    TrafficLight trafficLight3; 
-    TrafficLight trafficLight4; 
-    vector<TrafficLight> intersection; 
+    TrafficLight* trafficLight1; 
+    TrafficLight* trafficLight2; 
+    TrafficLight* trafficLight3; 
+    TrafficLight* trafficLight4; 
+    vector<TrafficLight*> intersection; 
 }; 
