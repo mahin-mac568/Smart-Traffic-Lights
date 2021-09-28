@@ -41,6 +41,10 @@ int main(int argc, char *argv[]) {
   // Grabbing ahold of the time variable, argv[1] contains "-t=<num>"
   string arg = argv[1];                         
   int t = stoi(arg.substr(arg.find("=")+1)); 
+  if (t < 0) {
+    cout << "Error: Negative number for time was passed in" << endl; 
+    return 1; 
+  }
 
   // Collecting all of the relevant cnn values (to identify relevant rows)
   for (int i=0; i<allCNNs.size(); i++) {
@@ -152,15 +156,15 @@ int main(int argc, char *argv[]) {
       }
       else if (j==1) {
         combo += allTCs[i].getTL2().getCurrentColor(); 
-        streetNames += " " + allTCs[i].getTL2().getStreetName();
+        streetNames += " and " + allTCs[i].getTL2().getStreetName();
       }
       else if (j==2) {
         combo += allTCs[i].getTL3().getCurrentColor(); 
-        streetNames += " " + allTCs[i].getTL3().getStreetName();
+        streetNames += " and " + allTCs[i].getTL3().getStreetName();
       }
       else {
         combo += allTCs[i].getTL4().getCurrentColor(); 
-        streetNames += " " + allTCs[i].getTL4().getStreetName();
+        streetNames += " and " + allTCs[i].getTL4().getStreetName();
       }
     }
   

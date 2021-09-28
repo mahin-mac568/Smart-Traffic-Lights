@@ -14,7 +14,7 @@ TrafficLight::TrafficLight() {}
 // Has street name, number, count, cycle time, and current light color 
 TrafficLight::TrafficLight(string id, string stname, int stnum, int k, char color) {
   cnn = id;               // the id number for the street 
-  streetName = stname;    
+  streetName = stname;    // name of the street 
   streetNumber = stnum;   // the order of the street at its intersection 
   currentColor = color;   // defaults to red, will change as cycling occurs 
 
@@ -27,10 +27,6 @@ TrafficLight::TrafficLight(string id, string stname, int stnum, int k, char colo
   else {
     greenCycle = 30; 
   }
-
-  // if (streetNumber == 1) {  // may or may not need this, leave it for now 
-  //   currentColor = 'g'; 
-  // }
 }
 
 // Getter for traffic light's id number 
@@ -65,8 +61,6 @@ void TrafficLight::setColor(char color) {
 
 // Write this traffic light's information as one row to the output csv file
 void TrafficLight::csv_helper(ofstream& myfile) {
-  // cout << "Got to csv_helper" << endl; 
-
   string colorInCaps; 
 
   if (currentColor == 'g') {
@@ -78,10 +72,6 @@ void TrafficLight::csv_helper(ofstream& myfile) {
   else {
     colorInCaps = "YELLOW"; 
   }
-
-  // cout << "Got past if-blocks" << endl; 
-
-  // cout << cnn << ", " << streetName << ", " << colorInCaps << endl; 
-  // string newRow = cnn + "," + streetName + "," + colorInCaps + "\n"; 
+ 
   myfile << cnn << ", " << streetName << ", " << colorInCaps << "\n"; 
 } 
