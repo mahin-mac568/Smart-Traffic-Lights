@@ -86,15 +86,15 @@ int main(int argc, char *argv[]) {
 
     // Instantiate the traffic controllers, push them to TC vector 
     if (!street3.empty() && !street4.empty()) {
-      TrafficController tc(&trafLight1, &trafLight2, &trafLight3, &trafLight4); 
+      TrafficController tc(trafLight1, trafLight2, trafLight3, trafLight4); 
       allTCs.push_back(tc); 
     }
     else if (!street3.empty()) {
-      TrafficController tc(&trafLight1, &trafLight2, &trafLight3); 
+      TrafficController tc(trafLight1, trafLight2, trafLight3); 
       allTCs.push_back(tc); 
     }
     else {
-      TrafficController tc(&trafLight1, &trafLight2); 
+      TrafficController tc(trafLight1, trafLight2); 
       allTCs.push_back(tc); 
     }
   }
@@ -117,13 +117,12 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  // OUTPUT FILES (preparation)
   // Prepare output csv file 
   ofstream csv;
   csv.open("myfile.csv"); 
   csv << "CNN, Street Name, Color\n"; 
 
-  // Write the final light states to a csv file 
+  // Write the final light states to csv file 
   for (int i=0; i<allTCs.size(); i++) {
     allTCs[i].writecsv(csv); 
   }  
@@ -143,33 +142,25 @@ int main(int argc, char *argv[]) {
     string combo; 
     string streetNames; 
 
-    vector<TrafficLight*> lights = allTCs[i].getAllLights(); 
-    int numLights = lights.size(); 
+    vector<TrafficLight> lights = allTCs[i].getAllLights(); 
+    int numLights = allTCs[i].getAllLights().size(); 
 
     for (int j=0; j<numLights; j++) {
-      char color = (*lights[j]).getCurrentColor(); 
-      combo += color; 
-      string name = (*lights[j]).getStreetName(); 
-      if (numLights==2 && j==0) {
-        streetNames += name + " ";
+      if (j==0) {
+        combo += allTCs[i].getTL1().getCurrentColor(); 
+        streetNames += allTCs[i].getTL1().getStreetName();
       }
-      else if (numLights==2 && j==1) {
-        streetNames += "and " + name; 
+      else if (j==1) {
+        combo += allTCs[i].getTL2().getCurrentColor(); 
+        streetNames += " " + allTCs[i].getTL2().getStreetName();
       }
-      else if (numLights==3 && (j==0 || j==1)) {
-        streetNames += name+", "; 
-      }
-      else if (numLights==3 && j==2) {
-        streetNames += "and " + name;
-      }
-      else if (numLights==4 && (j==0 || j==1 || j==2)) {
-        streetNames += name+", "; 
-      }
-      else if (numLights==4 && j==3) {
-        streetNames += "and " + name;
+      else if (j==2) {
+        combo += allTCs[i].getTL3().getCurrentColor(); 
+        streetNames += " " + allTCs[i].getTL3().getStreetName();
       }
       else {
-        cout << "Wrong number of traffic lights"; 
+        combo += allTCs[i].getTL4().getCurrentColor(); 
+        streetNames += " " + allTCs[i].getTL4().getStreetName();
       }
     }
   

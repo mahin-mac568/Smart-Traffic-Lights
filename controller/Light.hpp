@@ -24,7 +24,7 @@ class TrafficLight {
     // SETTERS 
     void setColor(char);     // Setter for traffic light's current color 
 
-    // OTHER METHODS 
+    // METHODS 
     void csv_helper(ofstream&); 
 
   private:
