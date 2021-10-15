@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
 
   // Simulate time, cycle the lights while popping and pushing to queue appropriately 
   int i = 0; 
-  while (i < t) {
+  while (i <= t) {
     Event topEvent = eventQueue.top(); 
     if (i == topEvent.getTime()) {
       eventQueue.pop();
