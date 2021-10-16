@@ -1,8 +1,8 @@
 #include "event.hpp"
 
 event::event(const uint32_t controller_index, const uint32_t time)
-        : controller_index(controller_index),
-          time(time) {
+: controller_index(controller_index), time(time) 
+{
 }
 
 bool event::operator<(const event& other) const {
