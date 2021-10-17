@@ -11,16 +11,15 @@
 std::vector<controller::traffic_controller> initialize_controllers(const std::string& csv_file_name);
 std::priority_queue<event> create_events(const uint32_t total_events); 
 
-std::vector< std::vector<std::string> > create_table1(const std::string& csv_file_name); 
-std::vector< std::vector<std::string> > create_table2(const std::string& csv_file_name); 
-
-std::vector<street> initialize_streets(const std::string& csv_file_name); 
-std::tr1::unordered_map<uint32_t, street> street_map; 
-uint32_t compute_lookup_key(uint32_t cnn1, uint32_t cnn2);
-
 void print_kml_header(std::ofstream& fout);
 void print_icons(std::ofstream& fout);
 void print_kml_footer(std::ofstream& fout);
+
+std::vector< std::vector<std::string> > create_table1(const std::string& csv_file_name); 
+std::vector< std::vector<std::string> > create_table2(const std::string& csv_file_name); 
+
+std::vector<street> initialize_streets(std::vector<std::vector<std::string>> sc_table); 
+std::tr1::unordered_map<uint32_t, street> create_street_map(std::vector<street> streets); 
 
 int main(int argc, char* argv[]) {
     if(argc < 2) {
@@ -39,6 +38,11 @@ int main(int argc, char* argv[]) {
             = create_table1("Traffic_Signals_SF.csv"); 
     std::vector< std::vector<std::string> > sc_table 
             = create_table2("Sync_And_Cars.csv"); 
+
+    std::vector<street> streets 
+     = initialize_streets(std::vector<std::vector<std::string>> sc_table); 
+
+    std::tr1::unordered_map<uint32_t, street> street_map = create_street_map(std::vector<street> streets); 
 
     while(!events.empty()) {
         const event current = events.top();
@@ -103,48 +107,6 @@ std::vector<controller::traffic_controller> initialize_controllers(const std::st
     return controllers;
 }
 
-std::vector< std::vector<std::string> > create_table1(const std::string& csv_file_name) {
-    std::vector< std::vector<std::string> > tssf_table; 
-
-    std::ifstream fin(csv_file_name);   // input file 
-    std::string line;                   // declare the header string
-    std::getline(fin, line);            // read and pipe in the header line
-    uint32_t i = 0; 
-
-    while(std::getline(fin, line)) {
-        if (i == 0) {
-            i++; 
-            continue; 
-        }
-        csv::fields_t fields = csv::parse_csv_fields(line);
-        tssf_table.push_back(fields); 
-        i++; 
-    }
-
-    return tssf_table; 
-}
-
-std::vector< std::vector<std::string> > create_table2(const std::string& csv_file_name) {
-    std::vector< std::vector<std::string> > sc_table; 
-
-    std::ifstream fin(csv_file_name);   // input file 
-    std::string line;                   // declare the header string
-    std::getline(fin, line);            // read and pipe in the header line
-    uint32_t i = 0; 
-
-    while(std::getline(fin, line)) {
-        if (i < 2) {
-            i++; 
-            continue; 
-        }
-        csv::fields_t fields = csv::parse_csv_fields(line);
-        sc_table.push_back(fields); 
-        i++; 
-    }
-
-    return sc_table;
-}
-
 std::priority_queue<event> create_events(const uint32_t total_events) {
     std::priority_queue<event> events;
 
@@ -198,4 +160,71 @@ void print_icons(std::ofstream& fout) {
 void print_kml_footer(std::ofstream& fout) {
     fout << "</Document>\n";
     fout << "</kml>\n";
+}
+
+std::vector< std::vector<std::string> > create_table1(const std::string& csv_file_name) {
+    std::vector< std::vector<std::string> > tssf_table; 
+
+    std::ifstream fin(csv_file_name);   // input file 
+    std::string line;                   // declare the header string
+    std::getline(fin, line);            // read and pipe in the header line
+    uint32_t i = 0; 
+
+    while(std::getline(fin, line)) {
+        if (i == 0) {
+            i++; 
+            continue; 
+        }
+        csv::fields_t fields = csv::parse_csv_fields(line);
+        tssf_table.push_back(fields); 
+        i++; 
+    }
+
+    return tssf_table; 
+}
+
+std::vector< std::vector<std::string> > create_table2(const std::string& csv_file_name) {
+    std::vector< std::vector<std::string> > sc_table; 
+
+    std::ifstream fin(csv_file_name);   // input file 
+    std::string line;                   // declare the header string
+    std::getline(fin, line);            // read and pipe in the header line
+    uint32_t i = 0; 
+
+    while(std::getline(fin, line)) {
+        if (i < 2) {
+            i++; 
+            continue; 
+        }
+        csv::fields_t fields = csv::parse_csv_fields(line);
+        sc_table.push_back(fields); 
+        i++; 
+    }
+
+    return sc_table;
+}
+
+std::vector<street> initialize_streets (std::vector<std::vector<std::string>> sc_table) {
+    std::vector<street> streets;
+
+    for (int i=0; i<sc_table.size(); i++) {
+        for (int j=0; j<sc_table.at(i).size()-1; j++) {
+            uint32_t cnn0 = std::stoi(sc_table.at(i).at(j)); 
+            uint32_t cnn1 = std::stoi(sc_table.at(i).at(j+1)); 
+            street st(cnn0, cnn1, key); 
+            streets.push_back(st); 
+        }
+    }
+
+    return streets; 
+}
+
+std::tr1::unordered_map<uint32_t, street> create_street_map(std::vector<street> streets) {
+    std::tr1::unordered_map<uint32_t, street> street_map; 
+    
+    for(street& st : streets) {
+        street_map.insert( { st.get_lookup_key(), st });
+    }
+
+    return street_map; 
 }
