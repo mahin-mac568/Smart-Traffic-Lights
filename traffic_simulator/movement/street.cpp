@@ -10,12 +10,12 @@ street::street(const uint32_t cnn0, const uint32_t cnn1,
                std::pair<double,double> coords1, 
                std::string name, uint32_t speed) 
       : start_point_cnn(cnn0), dest_point_cnn(cnn1), 
-        street_name(name), speed(speed)
+        street_name(name), speed_limit(speed)
 {
   is_destination = (dest_point_cnn == 0) ? true : false;
   lookup_key = compute_lookup_key(cnn0, cnn1); 
   distance = compute_distance(coords0, coords1); 
-  time_needed = compute_time(distance, speed); 
+  time_needed = compute_time(distance, speed_limit); 
 }
 
 
@@ -52,8 +52,8 @@ double street::get_time_needed() {
   return time_needed; 
 }
 
-uint32_t street::get_speed() {
-  return speed; 
+uint32_t street::get_speed_limit() {
+  return speed_limit; 
 }
 
 
@@ -74,6 +74,6 @@ double street::compute_distance(const std::pair<double, double>& point1,
     return std::sqrt(long_miles * long_miles + lat_miles * lat_miles);
 }
 
-double street::compute_time(const double distance, const uint32_t speed) {
-  return std::ceil((distance * 3600) / speed);
+double street::compute_time(const double distance, const uint32_t speed_limit) {
+  return std::ceil((distance * 3600) / speed_limit);
 }

@@ -20,7 +20,7 @@ class street {
     uint32_t get_lookup_key(); 
     double get_distance(); 
     double get_time_needed(); 
-    uint32_t get_speed(); 
+    uint32_t get_speed_limit(); 
 
     // member functions 
     uint32_t compute_lookup_key(uint32_t cnn1, uint32_t cnn2);
@@ -28,7 +28,7 @@ class street {
     double compute_distance(const std::pair<double, double>& point1,
                             const std::pair<double, double>& point2);
 
-    double compute_time(const double distance, const uint32_t speed);
+    double compute_time(const double distance, const uint32_t speed_limit);
 
   private: 
     std::string street_name; 
@@ -39,6 +39,6 @@ class street {
     uint32_t lookup_key; 
     double distance; 
     double time_needed; 
-    uint32_t speed; 
+    uint32_t speed_limit; 
 }; 
 

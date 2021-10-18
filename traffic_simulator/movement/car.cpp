@@ -6,8 +6,8 @@
 #include <tr1/unordered_map>
 
 // CONSTRUCTOR 
-car::car(std::string name, std::vector<std::string> car_path) 
-   : street_name(name), all_intersections(car_path)
+car::car(std::string name, std::vector<std::string> car_path, uint32_t speed) 
+   : street_name(name), all_intersections(car_path), car_speed(speed)
 {
   current_intersection = std::stoi(all_intersections.at(0)); 
   next_intersection = std::stoi(all_intersections.at(1));
@@ -36,8 +36,16 @@ std::vector<std::string> car::get_all_intersections() {
   return all_intersections; 
 }
 
+uint32_t car::get_car_speed() {
+  return car_speed; 
+}
+
 
 // MEMBER FUNCTIONS 
+
+void car::update_time_elapsed(double distance, uint32_t speed) {
+  time_elapsed = ceil(distance / speed); 
+}
 
 void car::move_to_next_intersection() {
 

@@ -22,7 +22,7 @@ void print_kml_header(std::ofstream& fout);
 void print_icons(std::ofstream& fout);
 void print_kml_footer(std::ofstream& fout);
 
-std::vector< std::vector<std::string> > create_table
+std::vector< std::vector<std::string> > create_2d_table
   (const std::string& csv_file_name); 
 
 std::tr1::unordered_map<uint32_t, std::pair<double, double>> create_coords_map
@@ -47,7 +47,8 @@ std::tr1::unordered_map<uint32_t, street> create_street_map
 
 std::vector<car> initialize_cars 
   (std::vector<std::vector<std::string>> sc_table,
-   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map); 
+   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map,
+   uint32_t speed); 
 
 
 int main(int argc, char* argv[]) {
@@ -90,15 +91,28 @@ int main(int argc, char* argv[]) {
         print_kml_footer(fout);
     }
 
+
     // HOMEWORK 2 
 
+    std::pair<std::string, std::string> traffic_load_types 
+      = { "light", "heavy" }; 
+    std::pair<std::string, std::string> sync_types 
+      = { "synchronized", "unsynchronized" }; 
+
+    std::string traffic_load = traffic_load_types.first; 
+    std::string sync_type; 
+    
     const uint32_t LIGHT_TRAFFIC_SPEED = 30; 
     const uint32_t HEAVY_TRAFFIC_SPEED = 3; 
 
+    uint32_t simulation_speed; 
+    simulation_speed = (traffic_load == "light") ? 
+      LIGHT_TRAFFIC_SPEED : HEAVY_TRAFFIC_SPEED; 
+
     std::vector< std::vector<std::string> > tssf_table 
-            = create_table("Traffic_Signals_SF.csv"); 
+            = create_2d_table("Traffic_Signals_SF.csv"); 
     std::vector< std::vector<std::string> > sc_table 
-            = create_table("Sync_And_Cars.csv"); 
+            = create_2d_table("Sync_And_Cars.csv"); 
 
     std::tr1::unordered_map<uint32_t, std::pair<double, double>> coords_map
             = create_coords_map(tssf_table);
@@ -107,12 +121,12 @@ int main(int argc, char* argv[]) {
             = create_s_names_map(tssf_table); 
 
     std::vector<street> streets 
-            = initialize_streets(sc_table, coords_map, s_names_map, LIGHT_TRAFFIC_SPEED);
+            = initialize_streets(sc_table, coords_map, s_names_map, simulation_speed);
 
     std::tr1::unordered_map<uint32_t, street> street_map 
             = create_street_map(streets); 
 
-    std::vector<car> cars = initialize_cars(sc_table, s_names_map); 
+    std::vector<car> cars = initialize_cars(sc_table, s_names_map, simulation_speed); 
 }
 
 std::vector<controller::traffic_controller> initialize_controllers
@@ -205,7 +219,7 @@ void print_kml_footer(std::ofstream& fout) {
     fout << "</kml>\n";
 }
 
-std::vector< std::vector<std::string> > create_table
+std::vector< std::vector<std::string> > create_2d_table
   (const std::string& csv_file_name) 
 {
     std::vector< std::vector<std::string> > table; 
@@ -348,7 +362,8 @@ std::tr1::unordered_map<uint32_t, street> create_street_map(std::vector<street> 
 
 std::vector<car> initialize_cars 
   (std::vector<std::vector<std::string>> sc_table,
-   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map)
+   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map, 
+   uint32_t speed)
 {
     std::vector<car> cars; 
 
@@ -362,7 +377,7 @@ std::vector<car> initialize_cars
         std::vector<std::string> cnn1_street_names = s_names_map[cnn1]; 
         std::string street_name = obtain_street_name
           (cnn0_street_names, cnn1_street_names, string_cnn0, string_cnn1);
-        car c(street_name, car_path); 
+        car c(street_name, car_path, speed); 
         cars.push_back(c); 
     }
 
