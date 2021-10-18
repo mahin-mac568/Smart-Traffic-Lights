@@ -10,6 +10,7 @@
 #include "csv/csv_reader.hpp"
 #include "event.hpp"
 #include "movement/street.hpp"
+#include "movement/car.hpp"
 
 
 std::vector<controller::traffic_controller> initialize_controllers
@@ -30,11 +31,23 @@ std::tr1::unordered_map<uint32_t, std::pair<double, double>> create_coords_map
 std::tr1::unordered_map<uint32_t, std::vector<std::string>> create_s_names_map
   (std::vector<std::vector<std::string>> tssf_table); 
 
+std::string obtain_street_name
+  (std::vector<std::string> cnn0_snames, 
+   std::vector<std::string> cnn1_snames, 
+   std::string string_cnn0, std::string string_cnn1); 
+
 std::vector<street> initialize_streets
-  (std::vector<std::vector<std::string>> sc_table); 
+  (std::vector<std::vector<std::string>> sc_table, 
+   std::tr1::unordered_map<uint32_t, std::pair<double, double>> coords_map,
+   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map, 
+   uint32_t speed); 
 
 std::tr1::unordered_map<uint32_t, street> create_street_map
   (std::vector<street> streets); 
+
+std::vector<car> initialize_cars 
+  (std::vector<std::vector<std::string>> sc_table,
+   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map); 
 
 
 int main(int argc, char* argv[]) {
@@ -49,19 +62,6 @@ int main(int argc, char* argv[]) {
             = initialize_controllers("Traffic_Signals_SF.csv");
 
     std::priority_queue<event> events = create_events(controllers.size());
-
-    std::vector< std::vector<std::string> > tssf_table 
-            = create_table("Traffic_Signals_SF.csv"); 
-    std::vector< std::vector<std::string> > sc_table 
-            = create_table("Sync_And_Cars.csv"); 
-
-    std::tr1::unordered_map<uint32_t, street> street_map 
-     = create_street_map(std::vector<street> streets); 
-
-     
-
-    std::vector<street> streets 
-     = initialize_streets(std::vector<std::vector<std::string>> sc_table);
 
     while(!events.empty()) {
         const event current = events.top();
@@ -89,6 +89,30 @@ int main(int argc, char* argv[]) {
         }
         print_kml_footer(fout);
     }
+
+    // HOMEWORK 2 
+
+    const uint32_t LIGHT_TRAFFIC_SPEED = 30; 
+    const uint32_t HEAVY_TRAFFIC_SPEED = 3; 
+
+    std::vector< std::vector<std::string> > tssf_table 
+            = create_table("Traffic_Signals_SF.csv"); 
+    std::vector< std::vector<std::string> > sc_table 
+            = create_table("Sync_And_Cars.csv"); 
+
+    std::tr1::unordered_map<uint32_t, std::pair<double, double>> coords_map
+            = create_coords_map(tssf_table);
+
+    std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map
+            = create_s_names_map(tssf_table); 
+
+    std::vector<street> streets 
+            = initialize_streets(sc_table, coords_map, s_names_map, LIGHT_TRAFFIC_SPEED);
+
+    std::tr1::unordered_map<uint32_t, street> street_map 
+            = create_street_map(streets); 
+
+    std::vector<car> cars = initialize_cars(sc_table, s_names_map); 
 }
 
 std::vector<controller::traffic_controller> initialize_controllers
@@ -230,7 +254,7 @@ std::tr1::unordered_map<uint32_t, std::pair<double, double>> create_coords_map
         std::string latitude = coordNums.substr(0, coordNums.find(" ")); 
         std::string longitude = coordNums.substr(coordNums.find(" ")+1); 
         std::pair<double, double> coords(std::stod(latitude), std::stod(longitude)); 
-        coords_map.insert( { cnn, coords });
+        coords_map.insert({ cnn, coords });
     }
     return coords_map; 
 }
@@ -256,24 +280,57 @@ std::tr1::unordered_map<uint32_t, std::vector<std::string>> create_s_names_map
         std::vector<std::string> street_names
           { street1_name, street2_name, street3_name, street4_name }; 
 
-        s_names_map.insert( { cnn, street_names });
+        s_names_map.insert({ cnn, street_names });
     }
     return s_names_map; 
 }
 
+std::string obtain_street_name
+  (std::vector<std::string> cnn0_s_names, std::vector<std::string> cnn1_s_names,
+   std::string string_cnn0, std::string string_cnn1) 
+{
+    std::string shared_street; 
+    std::string street_name; 
+
+    for (std::string cnn0_street_name : cnn0_s_names) {
+        for (std::string cnn1_street_name : cnn1_s_names) {
+            if (cnn0_street_name == cnn1_street_name) {
+                shared_street = cnn0_street_name; 
+            }
+        }
+    }
+
+    if (shared_street == "") {
+        street_name = "UNKNOWN FROM " + string_cnn0 + " TO " + string_cnn1; 
+    }
+    else {
+        street_name = shared_street + " FROM " + string_cnn0 + " TO " + string_cnn1;
+    }
+
+    return shared_street; 
+}
+
 std::vector<street> initialize_streets
   (std::vector<std::vector<std::string>> sc_table, 
-   std::tr1::unordered_map<uint32_t, std::pair<double, double>> coords_map) 
+   std::tr1::unordered_map<uint32_t, std::pair<double, double>> coords_map,
+   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map, 
+   uint32_t speed) 
 {
     std::vector<street> streets;
 
     for (int i=0; i<sc_table.size(); i++) {
         for (int j=0; j<sc_table.at(i).size()-1; j++) {
-            uint32_t cnn0 = std::stoi(sc_table.at(i).at(j)); 
-            uint32_t cnn1 = std::stoi(sc_table.at(i).at(j+1)); 
+            std::string string_cnn0 = sc_table.at(i).at(j); 
+            std::string string_cnn1 = sc_table.at(i).at(j+1); 
+            uint32_t cnn0 = std::stoi(string_cnn0); 
+            uint32_t cnn1 = std::stoi(string_cnn1); 
             std::pair<double,double> coords0 = coords_map[cnn0];
             std::pair<double,double> coords1 = coords_map[cnn1];
-            street st(cnn0, cnn1, coords0, coords1); 
+            std::vector<std::string> cnn0_s_names = s_names_map[cnn0]; 
+            std::vector<std::string> cnn1_s_names = s_names_map[cnn1]; 
+            std::string street_name = obtain_street_name
+              (cnn0_s_names, cnn1_s_names, string_cnn0, string_cnn1); 
+            street st(cnn0, cnn1, coords0, coords1, street_name, speed); 
             streets.push_back(st); 
         }
     }
@@ -284,7 +341,30 @@ std::tr1::unordered_map<uint32_t, street> create_street_map(std::vector<street> 
     std::tr1::unordered_map<uint32_t, street> street_map; 
     
     for(street& st : streets) {
-        street_map.insert( { st.get_lookup_key(), st });
+        street_map.insert({ st.get_lookup_key(), st });
     }
     return street_map; 
+}
+
+std::vector<car> initialize_cars 
+  (std::vector<std::vector<std::string>> sc_table,
+   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map)
+{
+    std::vector<car> cars; 
+
+    for (int i=0; i<sc_table.size(); i++) {
+        std::vector<std::string> car_path = sc_table.at(i);
+        std::string string_cnn0 = car_path.at(0);
+        std::string string_cnn1 = car_path.at(1);
+        uint32_t cnn0 = std::stoi(string_cnn0); 
+        uint32_t cnn1 = std::stoi(string_cnn1); 
+        std::vector<std::string> cnn0_street_names = s_names_map[cnn0]; 
+        std::vector<std::string> cnn1_street_names = s_names_map[cnn1]; 
+        std::string street_name = obtain_street_name
+          (cnn0_street_names, cnn1_street_names, string_cnn0, string_cnn1);
+        car c(street_name, car_path); 
+        cars.push_back(c); 
+    }
+
+    return cars; 
 }

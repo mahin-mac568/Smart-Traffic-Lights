@@ -7,12 +7,15 @@
 // CONSTRUCTOR 
 street::street(const uint32_t cnn0, const uint32_t cnn1, 
                std::pair<double,double> coords0, 
-               std::pair<double,double> coords1)
-      : start_point_cnn(cnn0), dest_point_cnn(cnn1)
+               std::pair<double,double> coords1, 
+               std::string name, uint32_t speed) 
+      : start_point_cnn(cnn0), dest_point_cnn(cnn1), 
+        street_name(name), speed(speed)
 {
   is_destination = (dest_point_cnn == 0) ? true : false;
   lookup_key = compute_lookup_key(cnn0, cnn1); 
   distance = compute_distance(coords0, coords1); 
+  time_needed = compute_time(distance, speed); 
 }
 
 
@@ -49,11 +52,15 @@ double street::get_time_needed() {
   return time_needed; 
 }
 
+uint32_t street::get_speed() {
+  return speed; 
+}
+
 
 // MEMBER FUNCTIONS 
 
 uint32_t compute_lookup_key(uint32_t cnn0, uint32_t cnn1, double coords) {
-    uint32_t cnn0_shifted = cnn0 << 32; 
+    uint32_t cnn0_shifted = (cnn0 << 32); 
     return cnn0_shifted | cnn1; 
 }
 

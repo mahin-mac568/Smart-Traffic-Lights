@@ -1,17 +1,15 @@
 #pragma once
 
-#include <fstream>
 #include <string>
 #include <vector>
 #include <utility>
 #include <tr1/unordered_map>
 
-#include "traffic_controller.hpp"
-
 class street {
   public: 
     // constructor 
-    street(uint32_t, uint32_t, std::pair<double,double>, std::pair<double,double>);
+    street(uint32_t, uint32_t, std::pair<double,double>, 
+           std::pair<double,double>, std::string, uint32_t);
 
     // getters 
     std::string get_street_name();
@@ -22,6 +20,7 @@ class street {
     uint32_t get_lookup_key(); 
     double get_distance(); 
     double get_time_needed(); 
+    uint32_t get_speed(); 
 
     // member functions 
     uint32_t compute_lookup_key(uint32_t cnn1, uint32_t cnn2);
@@ -31,8 +30,6 @@ class street {
 
     double compute_time(const double distance, const uint32_t speed);
 
-    string obtain_street_name(  );  
-
   private: 
     std::string street_name; 
     uint32_t capacity; 
@@ -40,8 +37,8 @@ class street {
     const uint32_t dest_point_cnn; 
     bool is_destination; 
     uint32_t lookup_key; 
-    std::pair<double> coordinates; 
     double distance; 
     double time_needed; 
+    uint32_t speed; 
 }; 
 
