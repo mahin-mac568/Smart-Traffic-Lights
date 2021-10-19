@@ -11,7 +11,7 @@
 class car {
   public:
     // constructor 
-    car(std::string, std::vector<std::string>, uint32_t); 
+    car(std::string, std::vector<std::string>, street); 
 
     // getters 
     uint32_t get_current_intersection(); 
@@ -22,7 +22,7 @@ class car {
     uint32_t get_car_speed(); 
 
     // member functions 
-    double compute_time(const double, const uint32_t);
+    // double compute_time(const double, const uint32_t);
     void update_time_elapsed(double, uint32_t); 
     void move_to_next_intersection();  // update distance traveled 
                                        // perhaps update time elapsed here too 

@@ -56,11 +56,14 @@ std::vector<street> initialize_streets
 std::tr1::unordered_map<uint32_t, street> create_street_map
   (std::vector<street> streets); 
 
+/* Creates a lookup key to be used for the street objects map */
+uint32_t compute_lookup_key(uint32_t cnn0, uint32_t cnn1, double coords); 
+
 /* Instantiates car objects and accumulates them to a vector */
 std::vector<car> initialize_cars 
   (std::vector<std::vector<std::string>> sc_table,
    std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map,
-   uint32_t speed); 
+   std::tr1::unordered_map<uint32_t, street> street_map); 
    
 
 /* MAIN PROGRAM */
@@ -152,7 +155,7 @@ int main(int argc, char* argv[]) {
             = create_street_map(streets); 
 
     /* Initializing the car objects into a vector */ 
-    std::vector<car> cars = initialize_cars(sc_table, s_names_map, simulation_speed); 
+    std::vector<car> cars = initialize_cars(sc_table, s_names_map, street_map); 
 }
 
 
@@ -357,7 +360,7 @@ std::string obtain_street_name
         street_name = shared_street + " FROM " + string_cnn0 + " TO " + string_cnn1;
     }
 
-    return shared_street; 
+    return street_name; 
 }
 
 /* Derives the shared street name based on the streets of two intersections */ 
@@ -398,25 +401,36 @@ std::tr1::unordered_map<uint32_t, street> create_street_map(std::vector<street> 
     return street_map; 
 }
 
+/* Creates a lookup key to be used for the street objects map */
+uint32_t compute_lookup_key(uint32_t cnn0, uint32_t cnn1) {
+    uint32_t cnn0_shifted = (cnn0 << 32); 
+    return cnn0_shifted | cnn1; 
+}
+
 /* Instantiates car objects and accumulates them to a vector */ 
 std::vector<car> initialize_cars 
   (std::vector<std::vector<std::string>> sc_table,
    std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map, 
-   uint32_t speed)
+   std::tr1::unordered_map<uint32_t, street> street_map)
 {
     std::vector<car> cars; 
 
     for (int i=0; i<sc_table.size(); i++) {
         std::vector<std::string> car_path = sc_table.at(i);
+
         std::string string_cnn0 = car_path.at(0);
         std::string string_cnn1 = car_path.at(1);
         uint32_t cnn0 = std::stoi(string_cnn0); 
         uint32_t cnn1 = std::stoi(string_cnn1); 
+
         std::vector<std::string> cnn0_street_names = s_names_map[cnn0]; 
         std::vector<std::string> cnn1_street_names = s_names_map[cnn1]; 
         std::string street_name = obtain_street_name
           (cnn0_street_names, cnn1_street_names, string_cnn0, string_cnn1);
-        car c(street_name, car_path, speed); 
+          
+        uint32_t key = compute_lookup_key(cnn0, cnn1); 
+        
+        car c(street_name, car_path, street_map[key]); 
         cars.push_back(c); 
     }
 

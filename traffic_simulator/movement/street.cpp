@@ -68,7 +68,7 @@ uint32_t street::get_speed_limit() {
 // MEMBER FUNCTIONS 
 
 /* Creates a lookup key to be used for the street objects map */
-uint32_t compute_lookup_key(uint32_t cnn0, uint32_t cnn1, double coords) {
+uint32_t compute_lookup_key(uint32_t cnn0, uint32_t cnn1) {
     uint32_t cnn0_shifted = (cnn0 << 32); 
     return cnn0_shifted | cnn1; 
 }
