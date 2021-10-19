@@ -13,6 +13,8 @@
 #include "movement/car.hpp"
 
 
+// HOMEWORK 1 GLOBAL FUNCTION DECLARATIONS  
+
 std::vector<controller::traffic_controller> initialize_controllers
   (const std::string& csv_file_name);
 
@@ -22,36 +24,50 @@ void print_kml_header(std::ofstream& fout);
 void print_icons(std::ofstream& fout);
 void print_kml_footer(std::ofstream& fout);
 
+
+// HOMEWORK 2 GLOBAL FUNCTION DECLARATIONS  
+
+/* Creates a 2-dimensional vector out of the input csv data */
 std::vector< std::vector<std::string> > create_2d_table
   (const std::string& csv_file_name); 
 
+/* Creates a dictionary that maps cnn values to (latitude, longitude) coordinates */
 std::tr1::unordered_map<uint32_t, std::pair<double, double>> create_coords_map
   (std::vector<std::vector<std::string>> tssf_table);  
 
+/* Creates a dictionary that maps cnn values to vectors of street names */
 std::tr1::unordered_map<uint32_t, std::vector<std::string>> create_s_names_map
   (std::vector<std::vector<std::string>> tssf_table); 
 
+/* Derives the shared street name based on the streets of two intersections */
 std::string obtain_street_name
   (std::vector<std::string> cnn0_snames, 
    std::vector<std::string> cnn1_snames, 
    std::string string_cnn0, std::string string_cnn1); 
 
+/* Instantiates street objects and accumulates them to a vector */
 std::vector<street> initialize_streets
   (std::vector<std::vector<std::string>> sc_table, 
    std::tr1::unordered_map<uint32_t, std::pair<double, double>> coords_map,
    std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map, 
    uint32_t speed); 
 
+/* Creates a dictionary that maps lookup keys to street objects */
 std::tr1::unordered_map<uint32_t, street> create_street_map
   (std::vector<street> streets); 
 
+/* Instantiates car objects and accumulates them to a vector */
 std::vector<car> initialize_cars 
   (std::vector<std::vector<std::string>> sc_table,
    std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map,
    uint32_t speed); 
+   
 
-
+/* MAIN PROGRAM */
 int main(int argc, char* argv[]) {
+    
+    // HOMEWORK 1 
+
     if(argc < 2) {
         std::cout << "Usage: ./<exec> -t=<time>" << std::endl;
         return 0;
@@ -94,40 +110,53 @@ int main(int argc, char* argv[]) {
 
     // HOMEWORK 2 
 
+    /* Constant speed values for light or heavy traffic */ 
+    const uint32_t LIGHT_TRAFFIC_SPEED = 30; 
+    const uint32_t HEAVY_TRAFFIC_SPEED = 3; 
+
+    /* Pairs with the different simulation types */ 
     std::pair<std::string, std::string> traffic_load_types 
       = { "light", "heavy" }; 
     std::pair<std::string, std::string> sync_types 
       = { "synchronized", "unsynchronized" }; 
 
+    /* Initializing the simulation types –– to be cycled as program runs */ 
     std::string traffic_load = traffic_load_types.first; 
     std::string sync_type; 
     
-    const uint32_t LIGHT_TRAFFIC_SPEED = 30; 
-    const uint32_t HEAVY_TRAFFIC_SPEED = 3; 
-
+    /* Initializing the car speeds based on the simulation type */ 
     uint32_t simulation_speed; 
     simulation_speed = (traffic_load == "light") ? 
       LIGHT_TRAFFIC_SPEED : HEAVY_TRAFFIC_SPEED; 
 
+    /* Creating 2-dimensional tables out of the two datasets */ 
     std::vector< std::vector<std::string> > tssf_table 
             = create_2d_table("Traffic_Signals_SF.csv"); 
     std::vector< std::vector<std::string> > sc_table 
             = create_2d_table("Sync_And_Cars.csv"); 
 
+    /* Creating the cnn-to-coordinate mappings */ 
     std::tr1::unordered_map<uint32_t, std::pair<double, double>> coords_map
             = create_coords_map(tssf_table);
 
+    /* Creating the cnn-to-street-name mappings */ 
     std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map
             = create_s_names_map(tssf_table); 
 
+    /* Instantiating all of the street objects into a vector */ 
     std::vector<street> streets 
-            = initialize_streets(sc_table, coords_map, s_names_map, simulation_speed);
+        = initialize_streets(sc_table, coords_map, s_names_map, simulation_speed);
 
+    /* Creating the cnn-to-street-object mappings */ 
     std::tr1::unordered_map<uint32_t, street> street_map 
             = create_street_map(streets); 
 
+    /* Initializing the car objects into a vector */ 
     std::vector<car> cars = initialize_cars(sc_table, s_names_map, simulation_speed); 
 }
+
+
+// HOMEWORK 1 GLOBAL FUNCTION DEFINITIONS 
 
 std::vector<controller::traffic_controller> initialize_controllers
   (const std::string& csv_file_name) 
@@ -219,6 +248,10 @@ void print_kml_footer(std::ofstream& fout) {
     fout << "</kml>\n";
 }
 
+
+// HOMEWORK 2 GLOBAL FUNCTION DEFINITIONS 
+
+/* Creates a 2-dimensional vector out of the input csv data */
 std::vector< std::vector<std::string> > create_2d_table
   (const std::string& csv_file_name) 
 {
@@ -250,6 +283,7 @@ std::vector< std::vector<std::string> > create_2d_table
     return table; 
 }
 
+/* Creates a dictionary that maps cnn values to (latitude, longitude) coordinates */ 
 std::tr1::unordered_map<uint32_t, std::pair<double, double>> create_coords_map
   (std::vector<std::vector<std::string>> tssf_table) 
 {
@@ -273,6 +307,7 @@ std::tr1::unordered_map<uint32_t, std::pair<double, double>> create_coords_map
     return coords_map; 
 }
 
+/* Creates a dictionary that maps cnn values to vectors of street names */ 
 std::tr1::unordered_map<uint32_t, std::vector<std::string>> create_s_names_map
   (std::vector<std::vector<std::string>> tssf_table) 
 {
@@ -299,6 +334,7 @@ std::tr1::unordered_map<uint32_t, std::vector<std::string>> create_s_names_map
     return s_names_map; 
 }
 
+/*  */ 
 std::string obtain_street_name
   (std::vector<std::string> cnn0_s_names, std::vector<std::string> cnn1_s_names,
    std::string string_cnn0, std::string string_cnn1) 
@@ -324,6 +360,7 @@ std::string obtain_street_name
     return shared_street; 
 }
 
+/* Derives the shared street name based on the streets of two intersections */ 
 std::vector<street> initialize_streets
   (std::vector<std::vector<std::string>> sc_table, 
    std::tr1::unordered_map<uint32_t, std::pair<double, double>> coords_map,
@@ -351,6 +388,7 @@ std::vector<street> initialize_streets
     return streets; 
 }
 
+/* Creates a dictionary that maps lookup keys to street objects */ 
 std::tr1::unordered_map<uint32_t, street> create_street_map(std::vector<street> streets) {
     std::tr1::unordered_map<uint32_t, street> street_map; 
     
@@ -360,6 +398,7 @@ std::tr1::unordered_map<uint32_t, street> create_street_map(std::vector<street> 
     return street_map; 
 }
 
+/* Instantiates car objects and accumulates them to a vector */ 
 std::vector<car> initialize_cars 
   (std::vector<std::vector<std::string>> sc_table,
    std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map, 

@@ -4,6 +4,12 @@
 #include <utility>
 #include <tr1/unordered_map>
 
+// Constant values to be used to help determine street object fields 
+const uint32_t LIGHT_TRAFFIC_SPEED = 30; 
+const uint32_t HEAVY_TRAFFIC_SPEED = 3; 
+const uint32_t LIGHT_TRAFFIC_CAPACITY = 20; 
+const uint32_t HEAVY_TRAFFIC_CAPACITY = 2; 
+
 // CONSTRUCTOR 
 street::street(const uint32_t cnn0, const uint32_t cnn1, 
                std::pair<double,double> coords0, 
@@ -16,6 +22,8 @@ street::street(const uint32_t cnn0, const uint32_t cnn1,
   lookup_key = compute_lookup_key(cnn0, cnn1); 
   distance = compute_distance(coords0, coords1); 
   time_needed = compute_time(distance, speed_limit); 
+  capacity = (speed == LIGHT_TRAFFIC_SPEED) ? 
+    LIGHT_TRAFFIC_CAPACITY : HEAVY_TRAFFIC_CAPACITY; 
 }
 
 
@@ -59,11 +67,13 @@ uint32_t street::get_speed_limit() {
 
 // MEMBER FUNCTIONS 
 
+/* Creates a lookup key to be used for the street objects map */
 uint32_t compute_lookup_key(uint32_t cnn0, uint32_t cnn1, double coords) {
     uint32_t cnn0_shifted = (cnn0 << 32); 
     return cnn0_shifted | cnn1; 
 }
 
+/* Computes the distance between two intersections (the length of this street) */
 double street::compute_distance(const std::pair<double, double>& point1,
                                 const std::pair<double, double>& point2) 
 {
@@ -74,6 +84,7 @@ double street::compute_distance(const std::pair<double, double>& point1,
     return std::sqrt(long_miles * long_miles + lat_miles * lat_miles);
 }
 
+/* Computes the time it takes to traverse this street depending on the speed limit */
 double street::compute_time(const double distance, const uint32_t speed_limit) {
   return std::ceil((distance * 3600) / speed_limit);
 }

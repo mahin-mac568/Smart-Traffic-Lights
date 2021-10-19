@@ -11,6 +11,7 @@ car::car(std::string name, std::vector<std::string> car_path, uint32_t speed)
 {
   current_intersection = std::stoi(all_intersections.at(0)); 
   next_intersection = std::stoi(all_intersections.at(1));
+  time_elapsed = compute_time(distance, speed_limit); 
 }
 
 
@@ -43,10 +44,17 @@ uint32_t car::get_car_speed() {
 
 // MEMBER FUNCTIONS 
 
+/*  */
+double car::compute_time(const double distance, const uint32_t speed_limit) {
+  return std::ceil((distance * 3600) / speed_limit);
+}
+
+/*  */
 void car::update_time_elapsed(double distance, uint32_t speed) {
   time_elapsed = ceil(distance / speed); 
 }
 
+/*  */
 void car::move_to_next_intersection() {
 
 }

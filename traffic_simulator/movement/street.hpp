@@ -30,6 +30,7 @@ class street {
 
     double compute_time(const double distance, const uint32_t speed_limit);
 
+  // member variables 
   private: 
     std::string street_name; 
     uint32_t capacity; 
