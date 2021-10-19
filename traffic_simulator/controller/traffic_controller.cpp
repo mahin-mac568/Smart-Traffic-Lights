@@ -61,5 +61,10 @@ namespace controller {
 
         fout << "  </Placemark>\n";
     }
+
+    std::vector<traffic_light> traffic_controller::get_lights() {
+        return lights; 
+    }
+
     
 }  // namespace controller

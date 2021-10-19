@@ -14,15 +14,14 @@ const uint32_t HEAVY_TRAFFIC_CAPACITY = 2;
 street::street(const uint32_t cnn0, const uint32_t cnn1, 
                std::pair<double,double> coords0, 
                std::pair<double,double> coords1, 
-               std::string name, uint32_t speed) 
-      : start_point_cnn(cnn0), dest_point_cnn(cnn1), 
-        street_name(name), speed_limit(speed)
+               std::string name, uint32_t speed, uint32_t key)  
+      : start_point_cnn(cnn0), end_point_cnn(cnn1), 
+        street_name(name), speed_limit(speed), lookup_key(key)
 {
-  is_destination = (dest_point_cnn == 0) ? true : false;
-  lookup_key = compute_lookup_key(cnn0, cnn1); 
+  is_destination = (end_point_cnn == 0) ? true : false;
   distance = compute_distance(coords0, coords1); 
   time_needed = compute_time(distance, speed_limit); 
-  capacity = (speed == LIGHT_TRAFFIC_SPEED) ? 
+  capacity = (speed_limit == LIGHT_TRAFFIC_SPEED) ? 
     LIGHT_TRAFFIC_CAPACITY : HEAVY_TRAFFIC_CAPACITY; 
 }
 
@@ -40,8 +39,8 @@ const uint32_t street::get_sp_cnn() {
   return start_point_cnn; 
 }
 
-const uint32_t street::get_d_cnn() {
-  return dest_point_cnn; 
+const uint32_t street::get_ep_cnn() {
+  return end_point_cnn; 
 }
 
 bool street::get_is_destination() {
@@ -67,12 +66,6 @@ uint32_t street::get_speed_limit() {
 
 // MEMBER FUNCTIONS 
 
-/* Creates a lookup key to be used for the street objects map */
-uint32_t compute_lookup_key(uint32_t cnn0, uint32_t cnn1) {
-    uint32_t cnn0_shifted = (cnn0 << 32); 
-    return cnn0_shifted | cnn1; 
-}
-
 /* Computes the distance between two intersections (the length of this street) */
 double street::compute_distance(const std::pair<double, double>& point1,
                                 const std::pair<double, double>& point2) 
@@ -87,4 +80,16 @@ double street::compute_distance(const std::pair<double, double>& point1,
 /* Computes the time it takes to traverse this street depending on the speed limit */
 double street::compute_time(const double distance, const uint32_t speed_limit) {
   return std::ceil((distance * 3600) / speed_limit);
+}
+
+/* Decreases the capacity of the street by 1; 
+   Called when a car object enters this street */
+void street::decrease_capacity() {
+  capacity -= 1; 
+}
+
+/* Increases the capacity of the street by 1; 
+   Called when a car object exits this street */
+void street::increase_capacity() {
+  capacity += 1; 
 }

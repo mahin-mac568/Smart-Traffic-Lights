@@ -18,6 +18,9 @@ public:
     // change the street lights according to the circular logic
     uint32_t transition();
 
+    // getter for names 
+    std::vector<traffic_light> get_lights(); 
+
     // print csv info
     void print_csv(std::ofstream& fout) const;
     // print kml info
@@ -29,8 +32,8 @@ private:
 
     // list of all lights at the controller
     std::vector<traffic_light> lights;
-    // current light to operate on
-    // for changing colors
+
+    // current light to operate on for changing colors
     int cur_light = 0;
 
     // coordinates given in the CSV file

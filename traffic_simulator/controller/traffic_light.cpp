@@ -7,8 +7,8 @@ namespace controller {
     uint32_t traffic_light::total_lights = 0;
 
     traffic_light::traffic_light(const std::string& name)
-    : name(name), 
-    green_time(compute_green_time(total_lights)) 
+                 : name(name), 
+                   green_time(compute_green_time(total_lights)) 
     {
         total_lights++;
     }

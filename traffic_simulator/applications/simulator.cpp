@@ -3,9 +3,11 @@
 #include <queue>
 #include <cmath>
 #include <utility>
+#include <string>
 #include <tuple>
 #include <tr1/unordered_map>
 
+#include "controller/traffic_light.hpp"
 #include "controller/traffic_controller.hpp"
 #include "csv/csv_reader.hpp"
 #include "event.hpp"
@@ -53,7 +55,7 @@ std::vector<street> initialize_streets
    uint32_t speed); 
 
 /* Creates a dictionary that maps lookup keys to street objects */
-std::tr1::unordered_map<uint32_t, street> create_street_map
+std::tr1::unordered_map<uint32_t,street> create_street_map
   (std::vector<street> streets); 
 
 /* Creates a lookup key to be used for the street objects map */
@@ -62,8 +64,11 @@ uint32_t compute_lookup_key(uint32_t cnn0, uint32_t cnn1, double coords);
 /* Instantiates car objects and accumulates them to a vector */
 std::vector<car> initialize_cars 
   (std::vector<std::vector<std::string>> sc_table,
-   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map,
-   std::tr1::unordered_map<uint32_t, street> street_map); 
+   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map); 
+
+/* Creates a dictionary that maps street names to traffic light objects */
+std::tr1::unordered_map<std::string,controller::traffic_light> create_lights_map
+  (std::vector<controller::traffic_controller> controllers); 
    
 
 /* MAIN PROGRAM */
@@ -86,9 +91,9 @@ int main(int argc, char* argv[]) {
     while(!events.empty()) {
         const event current = events.top();
         events.pop();
-        uint32_t next_time = current.get_time() + controllers[current.get_index()].transition();
-        if(next_time <= total_time) {
-            events.emplace(current.get_index(), next_time);
+        uint32_t next_street_time = current.get_time() + controllers[current.get_index()].transition();
+        if(next_street_time <= total_time) {
+            events.emplace(current.get_index(), next_street_time);
         }
     }
 
@@ -148,15 +153,40 @@ int main(int argc, char* argv[]) {
 
     /* Instantiating all of the street objects into a vector */ 
     std::vector<street> streets 
-        = initialize_streets(sc_table, coords_map, s_names_map, simulation_speed);
+     = initialize_streets(sc_table, coords_map, s_names_map, simulation_speed);
 
     /* Creating the cnn-to-street-object mappings */ 
     std::tr1::unordered_map<uint32_t, street> street_map 
             = create_street_map(streets); 
 
     /* Initializing the car objects into a vector */ 
-    std::vector<car> cars = initialize_cars(sc_table, s_names_map, street_map); 
+    std::vector<car> cars = initialize_cars(sc_table, street_map); 
+
+    /* Creating the street_name to traffic light mappings */ 
+    std::tr1::unordered_map<std::string,controller::traffic_light> lights_map
+            = create_lights_map(controllers); 
+
+    /* SIMULATING THE CAR MOVEMENT */
+    for (car& c : cars) {
+        uint32_t path_idx = c.get_curr_path_index(); 
+        uint32_t next_street_starting_cnn = c.get_next_street_intersection(); 
+        std::string string_next_street_ending_cnn 
+          = c.get_path_intersections().at(path_idx+1);
+        uint32_t next_street_ending_cnn = std::stoi(string_next_street_ending_cnn);
+        uint32_t key  // lookup key for the next street object 
+          = compute_lookup_key(next_street_starting_cnn, next_street_ending_cnn); 
+
+        std::string street_name = c.get_curr_street_name(); 
+        controller::traffic_light street_light = lights_map[street_name]; 
+        street next_street = street_map[key]; 
+        if (street_light.get_color() != 0 && next_street.get_capacity() > 0) {
+            c.drive_car(); 
+            c.set_curr_street(next_street);
+        }
+    }
+        
 }
+/* End of Main */ 
 
 
 // HOMEWORK 1 GLOBAL FUNCTION DEFINITIONS 
@@ -363,12 +393,18 @@ std::string obtain_street_name
     return street_name; 
 }
 
+/* Creates a lookup key to be used for the street objects map */
+uint32_t compute_lookup_key(uint32_t cnn0, uint32_t cnn1) {
+    uint32_t cnn0_shifted = (cnn0 << 32); 
+    return cnn0_shifted | cnn1; 
+}
+
 /* Derives the shared street name based on the streets of two intersections */ 
 std::vector<street> initialize_streets
   (std::vector<std::vector<std::string>> sc_table, 
    std::tr1::unordered_map<uint32_t, std::pair<double, double>> coords_map,
    std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map, 
-   uint32_t speed) 
+   uint32_t speed_limit) 
 {
     std::vector<street> streets;
 
@@ -383,8 +419,9 @@ std::vector<street> initialize_streets
             std::vector<std::string> cnn0_s_names = s_names_map[cnn0]; 
             std::vector<std::string> cnn1_s_names = s_names_map[cnn1]; 
             std::string street_name = obtain_street_name
-              (cnn0_s_names, cnn1_s_names, string_cnn0, string_cnn1); 
-            street st(cnn0, cnn1, coords0, coords1, street_name, speed); 
+              (cnn0_s_names, cnn1_s_names, string_cnn0, string_cnn1);
+            uint32_t key = compute_lookup_key(cnn0, cnn1); 
+            street st(cnn0, cnn1, coords0, coords1, street_name, speed_limit, key); 
             streets.push_back(st); 
         }
     }
@@ -401,16 +438,9 @@ std::tr1::unordered_map<uint32_t, street> create_street_map(std::vector<street> 
     return street_map; 
 }
 
-/* Creates a lookup key to be used for the street objects map */
-uint32_t compute_lookup_key(uint32_t cnn0, uint32_t cnn1) {
-    uint32_t cnn0_shifted = (cnn0 << 32); 
-    return cnn0_shifted | cnn1; 
-}
-
 /* Instantiates car objects and accumulates them to a vector */ 
 std::vector<car> initialize_cars 
-  (std::vector<std::vector<std::string>> sc_table,
-   std::tr1::unordered_map<uint32_t, std::vector<std::string>> s_names_map, 
+  (std::vector<std::vector<std::string>> sc_table, 
    std::tr1::unordered_map<uint32_t, street> street_map)
 {
     std::vector<car> cars; 
@@ -418,21 +448,30 @@ std::vector<car> initialize_cars
     for (int i=0; i<sc_table.size(); i++) {
         std::vector<std::string> car_path = sc_table.at(i);
 
-        std::string string_cnn0 = car_path.at(0);
-        std::string string_cnn1 = car_path.at(1);
-        uint32_t cnn0 = std::stoi(string_cnn0); 
-        uint32_t cnn1 = std::stoi(string_cnn1); 
-
-        std::vector<std::string> cnn0_street_names = s_names_map[cnn0]; 
-        std::vector<std::string> cnn1_street_names = s_names_map[cnn1]; 
-        std::string street_name = obtain_street_name
-          (cnn0_street_names, cnn1_street_names, string_cnn0, string_cnn1);
-          
+        uint32_t cnn0 = std::stoi(car_path.at(0)); 
+        uint32_t cnn1 = std::stoi(car_path.at(1)); 
         uint32_t key = compute_lookup_key(cnn0, cnn1); 
         
-        car c(street_name, car_path, street_map[key]); 
+        car c(street_map[key], car_path); 
+        street_map[key].decrease_capacity(); // make sure this modifies the original object
         cars.push_back(c); 
     }
 
     return cars; 
+}
+
+/* Creates a dictionary that maps street names to traffic light objects */
+std::tr1::unordered_map<std::string,controller::traffic_light> create_lights_map
+  (std::vector<controller::traffic_controller> controllers) 
+{
+    std::tr1::unordered_map<std::string, controller::traffic_light> lights_map; 
+
+    for(controller::traffic_controller& tc : controllers) {
+        std::vector<controller::traffic_light> lights = tc.get_lights(); 
+        for (controller::traffic_light& tl : lights) {
+            std::string name = tl.get_name(); 
+            lights_map.insert({ name, tl });
+        }
+    } 
+    return lights_map; 
 }
