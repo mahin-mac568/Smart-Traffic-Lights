@@ -30,8 +30,13 @@ void print_kml_footer(std::ofstream& fout);
 // HOMEWORK 2 GLOBAL FUNCTION DECLARATIONS  
 
 /* Creates a 2-dimensional vector out of the input csv data */
-std::vector< std::vector<std::string> > create_2d_table
+std::vector<std::vector<std::string>> create_2d_table
   (const std::string& csv_file_name); 
+
+/* Creates a vector of controllers that have synchronized traffic lights */
+std::vector<controller::traffic_controller> initialize_sync_controllers
+  (const std::string& csv_file_name, 
+   std::vector<std::vector<std::string>> sc_table);
 
 /* Creates a dictionary that maps cnn values to (latitude, longitude) coordinates */
 std::tr1::unordered_map<uint32_t, std::pair<double, double>> create_coords_map
@@ -177,7 +182,10 @@ int main(int argc, char* argv[]) {
     std::tr1::unordered_map<std::string,controller::traffic_light> lights_map
             = create_lights_map(controllers); 
 
-    // Question: Are the unknown lights taken care of? 
+    // Question: Are the unknown lights taken care of? Aka, do I still need to 
+    // do the thing where I need to just configure street1? To answer, I believe
+    // I still need to handle this, since looking up a traffic light object with
+    // an unknown street name as a key would not work. 
 
 
     /* SIMULATING THE CAR MOVEMENT */
@@ -210,8 +218,15 @@ int main(int argc, char* argv[]) {
         average_driving_time += time_driven; 
     }
     average_driving_time = average_driving_time / num_cars; 
+
+    
 }
 /* End of Main */ 
+
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 
 
 // HOMEWORK 1 GLOBAL FUNCTION DEFINITIONS 
@@ -339,6 +354,60 @@ std::vector< std::vector<std::string> > create_2d_table
         i++; 
     }
     return table; 
+}
+
+/* Creates a vector of controllers that have synchronized traffic lights */
+std::vector<controller::traffic_controller> initialize_sync_controllers
+  (const std::string& csv_file_name, 
+   std::vector<std::vector<std::string>> sc_table)
+{
+    std::vector<std::string> street_names;
+
+    for (int i=0; i<sc_table.size(); i++) {
+        for (int j=0; j<sc_table.at(i).size()-1; j++) {
+            std::string string_cnn0 = sc_table.at(i).at(j); 
+            std::string string_cnn1 = sc_table.at(i).at(j+1); 
+            uint32_t cnn0 = std::stoi(string_cnn0); 
+            uint32_t cnn1 = std::stoi(string_cnn1); 
+            std::pair<double,double> coords0 = coords_map[cnn0];
+            std::pair<double,double> coords1 = coords_map[cnn1];
+            std::vector<std::string> cnn0_s_names = st_names_map[cnn0]; 
+            std::vector<std::string> cnn1_s_names = st_names_map[cnn1]; 
+            std::string street_name = obtain_street_name
+              (cnn0_s_names, cnn1_s_names, string_cnn0, string_cnn1);
+            street_names.push_back(street_name); 
+
+    std::vector<controller::traffic_controller> controllers;
+
+    const uint32_t CNN_INDEX = 0;
+    const uint32_t TBC_INDEX = 12;
+    const uint32_t STREET1_INDEX = 3;
+    const uint32_t STREET2_INDEX = 4;
+    const uint32_t STREET3_INDEX = 6;
+    const uint32_t STREET4_INDEX = 8;
+    const uint32_t SHAPE_INDEX = 34;
+
+    std::ifstream fin(csv_file_name);
+    std::string line;
+    // read away the header line
+    std::getline(fin, line);
+
+    while(std::getline(fin, line)) {
+        csv::fields_t fields = csv::parse_csv_fields(line);
+        if(fields[TBC_INDEX] == "GPS") {
+            std::vector<std::string> street_names;
+            street_names.push_back(fields[STREET1_INDEX]);
+            street_names.push_back(fields[STREET2_INDEX]);
+            if(fields[STREET3_INDEX] != "") {
+                street_names.push_back(fields[STREET3_INDEX]);
+            }
+            if(fields[STREET4_INDEX] != "") {
+                street_names.push_back(fields[STREET4_INDEX]);
+            }
+            controllers.emplace_back(std::stoi(fields[CNN_INDEX]), street_names, fields[SHAPE_INDEX]);
+        }
+    }
+    return controllers;
 }
 
 /* Creates a dictionary that maps cnn values to (latitude, longitude) coordinates */ 
