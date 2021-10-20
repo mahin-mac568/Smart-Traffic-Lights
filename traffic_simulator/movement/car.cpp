@@ -51,20 +51,22 @@ uint32_t car::get_car_speed() {
 }
 
 
-// SETTERS 
-void car::set_curr_street(street next_street) {
-  current_street = next_street; 
-  current_street_name = next_street.get_street_name();
-}
-
-
 // MEMBER FUNCTIONS 
 
 /* Car moves from the start of its current block to the end of the block.
    The time elapsed is updated as the car moves from */
 void car::drive_car() {
-  current_path_index += 1; 
   current_intersection = next_intersection; 
-  next_intersection = std::stoi(path_intersections.at(current_path_index)); 
+  if (next_intersection != 0) {
+    next_intersection = std::stoi(path_intersections.at(current_path_index+1)); 
+  }
+  current_path_index += 1; 
   time_elapsed += ceil(current_street.get_time_needed()); 
+}
+
+void car::update_streets(street next_street) {
+  current_street.decrease_capacity(); 
+  next_street.increase_capacity(); 
+  current_street = next_street; 
+  current_street_name = next_street.get_street_name();
 }

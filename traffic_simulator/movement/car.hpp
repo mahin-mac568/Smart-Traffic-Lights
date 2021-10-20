@@ -21,11 +21,9 @@ class car {
     std::vector<std::string> get_path_intersections();  
     uint32_t get_car_speed(); 
 
-    // setters 
-    void set_curr_street(street); 
-
     // member functions 
     void drive_car(); 
+    void update_streets(street); 
  
   private:
     // member variables
