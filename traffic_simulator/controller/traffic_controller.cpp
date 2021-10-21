@@ -13,6 +13,19 @@ namespace controller {
         }
     }
 
+    // overloaded constructor for synchronization
+    traffic_controller::traffic_controller(const uint32_t cnn,
+                                           const std::vector<std::string>& names,
+                                           const std::string& location,
+                                           bool synchronize)
+    : cnn(cnn), location(location), is_synchronized(synchronize) 
+    // if synchronize is passed in, then it is always passed in as true 
+    {
+        for(const std::string& name : names) {
+            lights.emplace_back(name, is_synchronized);
+        }
+    }
+
     uint32_t traffic_controller::transition() {
         COLOR color = lights[cur_light].next_color();
 
@@ -66,5 +79,18 @@ namespace controller {
         return lights; 
     }
 
-    
+    // synchronization 
+    void traffic_controller::synchronize_green_time(std::string street_name) {
+        for (traffic_light& light : lights) {
+            if (light.get_name() == street_name) {
+                light.set_color(COLOR::GREEN); 
+                light.set_green_time(90); 
+            }
+            else {
+                light.set_green_time(90); 
+            }
+        }
+    }
+
+
 }  // namespace controller

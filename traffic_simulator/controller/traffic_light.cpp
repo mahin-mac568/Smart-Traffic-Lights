@@ -13,6 +13,15 @@ namespace controller {
         total_lights++;
     }
 
+    // overloaded constructor for synchronization
+    traffic_light::traffic_light(const std::string& name, bool synchronize)
+                 : name(name), 
+                   green_time(compute_green_time(total_lights)), 
+                   is_synchronized(synchronize) 
+    {
+        total_lights++;
+    }
+
     COLOR traffic_light::next_color() {
         return color = (COLOR)((color + 1) % num_colors);
     }
@@ -27,6 +36,14 @@ namespace controller {
 
     COLOR traffic_light::get_color() const {
         return color;
+    }
+
+    void traffic_light::set_color(COLOR c) {
+        color = c; 
+    }
+
+    void traffic_light::set_green_time(uint32_t t){
+        green_time = t; 
     }
 
     uint32_t compute_green_time(const uint32_t counter) {

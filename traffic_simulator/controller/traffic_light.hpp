@@ -12,6 +12,9 @@ public:
     // initialize with the name of the street
     traffic_light(const std::string& name);
 
+    // overloaded constructor for synchronization
+    traffic_light(const std::string& name, bool synchronize);
+
     // red -> green, green -> yellow, yellow -> red
     // return the new color
     COLOR next_color();
@@ -22,6 +25,8 @@ public:
     std::string get_name() const;
     // return color
     COLOR get_color() const;
+    void set_color(COLOR); 
+    void set_green_time(uint32_t); 
 
     // print to csv file
     void print_csv(std::ofstream& fout) const;
@@ -39,6 +44,8 @@ private:
     COLOR color = COLOR::RED;
     // time for which the light will be green
     uint32_t green_time;
+    // whether or not the light is synchronized, defaulted to false 
+    bool is_synchronized=false; 
 };
 
 }  // namespace controller

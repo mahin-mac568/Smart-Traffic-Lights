@@ -361,7 +361,7 @@ std::vector<controller::traffic_controller> initialize_sync_controllers
   (const std::string& csv_file_name, 
    std::vector<std::vector<std::string>> sc_table)
 {
-    std::vector<std::string> street_names;
+    std::vector<std::string> sync_street_names;
 
     for (int i=0; i<sc_table.size(); i++) {
         for (int j=0; j<sc_table.at(i).size()-1; j++) {
@@ -375,7 +375,7 @@ std::vector<controller::traffic_controller> initialize_sync_controllers
             std::vector<std::string> cnn1_s_names = st_names_map[cnn1]; 
             std::string street_name = obtain_street_name
               (cnn0_s_names, cnn1_s_names, string_cnn0, string_cnn1);
-            street_names.push_back(street_name); 
+            sync_street_names.push_back(street_name); 
 
     std::vector<controller::traffic_controller> controllers;
 
@@ -404,7 +404,16 @@ std::vector<controller::traffic_controller> initialize_sync_controllers
             if(fields[STREET4_INDEX] != "") {
                 street_names.push_back(fields[STREET4_INDEX]);
             }
-            controllers.emplace_back(std::stoi(fields[CNN_INDEX]), street_names, fields[SHAPE_INDEX]);
+
+            for(std:string& name : street_names) {
+                if (std::find(sync_street_names.begin(), 
+                              sync_street_names.end(), name) 
+                              != sync_street_names.end()) 
+                {
+                    controllers.emplace_back(std::stoi(fields[CNN_INDEX]), 
+                                             street_names, fields[SHAPE_INDEX]);
+                }
+            }
         }
     }
     return controllers;
