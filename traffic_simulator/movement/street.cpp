@@ -16,13 +16,13 @@ street::street(const uint32_t cnn0, const uint32_t cnn1,
                std::pair<double,double> coords1, 
                std::string name, uint32_t speed, uint32_t key)  
       : start_point_cnn(cnn0), end_point_cnn(cnn1), 
-        street_name(name), speed_limit(speed), lookup_key(key)
+        street_name(name), speed_limit(speed), lookup_key(key), 
+        is_destination((end_point_cnn == 0) ? true : false), 
+        distance(compute_distance(coords0, coords1)), 
+        time_needed(compute_time(distance, speed_limit)), 
+        capacity((speed_limit == LIGHT_TRAFFIC_SPEED) ? 
+          LIGHT_TRAFFIC_CAPACITY : HEAVY_TRAFFIC_CAPACITY) 
 {
-  is_destination = (end_point_cnn == 0) ? true : false;
-  distance = compute_distance(coords0, coords1); 
-  time_needed = compute_time(distance, speed_limit); 
-  capacity = (speed_limit == LIGHT_TRAFFIC_SPEED) ? 
-    LIGHT_TRAFFIC_CAPACITY : HEAVY_TRAFFIC_CAPACITY; 
 }
 
 

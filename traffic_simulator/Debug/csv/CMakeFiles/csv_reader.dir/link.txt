@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g -O0 -Wall -ggdb -gdwarf-3  -shared -Wl,-soname,libcsv_reader.so -o ../lib/libcsv_reader.so CMakeFiles/csv_reader.dir/csv_reader.cpp.o 

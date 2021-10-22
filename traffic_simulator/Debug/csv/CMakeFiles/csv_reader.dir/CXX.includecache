@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/csv/csv_reader.cpp
+csv_reader.hpp
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/csv/csv_reader.hpp
+regex
+-
+
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/csv/csv_reader.hpp
+string
+-
+vector
+-
+

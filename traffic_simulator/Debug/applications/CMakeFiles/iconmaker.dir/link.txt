@@ -1,0 +1,1 @@
+/usr/bin/c++  -g -O0 -Wall -ggdb -gdwarf-3  -rdynamic CMakeFiles/iconmaker.dir/iconmaker.cpp.o  -o ../bin/iconmaker  -Wl,-rpath,/home/mac568/Smart-Traffic-Lights/traffic_simulator/Debug/lib ../lib/libpngwriter.so -lpng -lz 

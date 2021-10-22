@@ -191,7 +191,7 @@ int main(int argc, char* argv[]) {
     /* SIMULATING THE CAR MOVEMENT */
     std::vector<car> all_cars; 
 
-    for (int t=0; t<total_time; t++) {
+    for (uint32_t t=0; t<total_time; t++) {
         simulate_cars(sc_table, st_names_map, lights_map, street_map, all_cars); 
     }
     
@@ -356,79 +356,15 @@ std::vector< std::vector<std::string> > create_2d_table
     return table; 
 }
 
-/* Creates a vector of controllers that have synchronized traffic lights */
-std::vector<controller::traffic_controller> initialize_sync_controllers
-  (const std::string& csv_file_name, 
-   std::vector<std::vector<std::string>> sc_table)
-{
-    std::vector<std::string> sync_street_names;
-
-    for (int i=0; i<sc_table.size(); i++) {
-        for (int j=0; j<sc_table.at(i).size()-1; j++) {
-            std::string string_cnn0 = sc_table.at(i).at(j); 
-            std::string string_cnn1 = sc_table.at(i).at(j+1); 
-            uint32_t cnn0 = std::stoi(string_cnn0); 
-            uint32_t cnn1 = std::stoi(string_cnn1); 
-            std::pair<double,double> coords0 = coords_map[cnn0];
-            std::pair<double,double> coords1 = coords_map[cnn1];
-            std::vector<std::string> cnn0_s_names = st_names_map[cnn0]; 
-            std::vector<std::string> cnn1_s_names = st_names_map[cnn1]; 
-            std::string street_name = obtain_street_name
-              (cnn0_s_names, cnn1_s_names, string_cnn0, string_cnn1);
-            sync_street_names.push_back(street_name); 
-
-    std::vector<controller::traffic_controller> controllers;
-
-    const uint32_t CNN_INDEX = 0;
-    const uint32_t TBC_INDEX = 12;
-    const uint32_t STREET1_INDEX = 3;
-    const uint32_t STREET2_INDEX = 4;
-    const uint32_t STREET3_INDEX = 6;
-    const uint32_t STREET4_INDEX = 8;
-    const uint32_t SHAPE_INDEX = 34;
-
-    std::ifstream fin(csv_file_name);
-    std::string line;
-    // read away the header line
-    std::getline(fin, line);
-
-    while(std::getline(fin, line)) {
-        csv::fields_t fields = csv::parse_csv_fields(line);
-        if(fields[TBC_INDEX] == "GPS") {
-            std::vector<std::string> street_names;
-            street_names.push_back(fields[STREET1_INDEX]);
-            street_names.push_back(fields[STREET2_INDEX]);
-            if(fields[STREET3_INDEX] != "") {
-                street_names.push_back(fields[STREET3_INDEX]);
-            }
-            if(fields[STREET4_INDEX] != "") {
-                street_names.push_back(fields[STREET4_INDEX]);
-            }
-
-            for(std:string& name : street_names) {
-                if (std::find(sync_street_names.begin(), 
-                              sync_street_names.end(), name) 
-                              != sync_street_names.end()) 
-                {
-                    controllers.emplace_back(std::stoi(fields[CNN_INDEX]), 
-                                             street_names, fields[SHAPE_INDEX]);
-                }
-            }
-        }
-    }
-    return controllers;
-}
-
 /* Creates a dictionary that maps cnn values to (latitude, longitude) coordinates */ 
 std::tr1::unordered_map<uint32_t, std::pair<double, double>> create_coords_map
-  (std::vector<std::vector<std::string>> tssf_table) 
-{
+  (std::vector<std::vector<std::string>> tssf_table) {
     std::tr1::unordered_map<uint32_t, std::pair<double, double>> coords_map; 
     
     const uint32_t CNN_INDEX = 0;
     const uint32_t SHAPE_INDEX = 34;
 
-    for (int i=0; i<tssf_table.at(CNN_INDEX).size(); i++) {
+    for (long unsigned int i=0; i<tssf_table.at(CNN_INDEX).size(); i++) {
         uint32_t cnn = std::stoi(tssf_table.at(CNN_INDEX).at(i)); 
         std::string str_coords = tssf_table.at(SHAPE_INDEX).at(i); 
         uint32_t fstIdx = str_coords.find("(")+1; 
@@ -511,8 +447,8 @@ std::vector<street> initialize_streets
 {
     std::vector<street> streets;
 
-    for (int i=0; i<sc_table.size(); i++) {
-        for (int j=0; j<sc_table.at(i).size()-1; j++) {
+    for (unsigned long int i=0; i<sc_table.size(); i++) {
+        for (unsigned long int j=0; j<sc_table.at(i).size()-1; j++) {
             std::string string_cnn0 = sc_table.at(i).at(j); 
             std::string string_cnn1 = sc_table.at(i).at(j+1); 
             uint32_t cnn0 = std::stoi(string_cnn0); 
@@ -521,8 +457,7 @@ std::vector<street> initialize_streets
             std::pair<double,double> coords1 = coords_map[cnn1];
             std::vector<std::string> cnn0_s_names = st_names_map[cnn0]; 
             std::vector<std::string> cnn1_s_names = st_names_map[cnn1]; 
-            std::string street_name = obtain_street_name
-              (cnn0_s_names, cnn1_s_names, string_cnn0, string_cnn1);
+            std::string street_name = obtain_street_name(cnn0_s_names, cnn1_s_names, string_cnn0, string_cnn1);
             uint32_t key = compute_lookup_key(cnn0, cnn1); 
             street st(cnn0, cnn1, coords0, coords1, street_name, speed_limit, key); 
             streets.push_back(st); 
@@ -548,7 +483,7 @@ std::vector<car> initialize_cars
 {
     std::vector<car> cars; 
 
-    for (int i=0; i<sc_table.size(); i++) {
+    for (unsigned long int i=0; i<sc_table.size(); i++) {
         std::vector<std::string> car_path = sc_table.at(i);
 
         uint32_t cnn0 = std::stoi(car_path.at(0)); 
@@ -589,24 +524,35 @@ void car_movement(std::vector<car> &cars,
         if (next_startpoint != 0) {
             uint32_t path_idx = c.get_curr_path_index(); 
 
-            std::string string_next_endpoint 
-              = c.get_path_intersections().at(path_idx+2); // +1 would give the same as next_intersection
-            uint32_t next_endpoint = std::stoi(string_next_endpoint);
-            uint32_t key = compute_lookup_key(next_startpoint, next_endpoint); 
+            // std::string string_next_endpoint 
+            //   = c.get_path_intersections().at(path_idx+2); // +1 would give the same as next_intersection
+            // uint32_t next_endpoint = std::stoi(string_next_endpoint);
+            // uint32_t key = compute_lookup_key(next_startpoint, next_endpoint); 
 
-            std::string street_name = c.get_curr_street_name(); 
-            controller::traffic_light street_light = lights_map[street_name]; 
-            street next_street = street_map[key]; 
+            // std::string street_name = c.get_curr_street_name(); 
+            // controller::traffic_light street_light = lights_map[street_name]; 
+            // street next_street = street_map[key]; 
 
-            if (street_light.get_color() != 0 && next_street.get_capacity() > 0) {
-                c.drive_car(); 
-                c.update_streets(next_street);
-            }
+            // if (street_light.get_color() != 0 && next_street.get_capacity() > 0) {
+            //     c.drive_car(); 
+            //     c.update_streets(next_street);
+            // }
+            // else if (street_light.get_color() == 0) {
+            //     // find the time it would take for this street to turn green 
+            //     // accumulate that to this car's time elapsed 
+            // }
+            // else if (next_street.get_capacity() == 0) {
+            //     // 
+                
+            // }
+            // else {
+            //     std::cout << "Reached color/capacity combination" << std::endl; 
+            // }
         } 
-        else {
-            c.drive_car(); 
-            break; 
-        }
+        // else {
+        //     c.drive_car(); 
+        //     break; 
+        // }
     }
 }
 

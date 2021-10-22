@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/controller/color.hpp
+string
+-
+vector
+-
+
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/controller/traffic_controller.cpp
+traffic_controller.hpp
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/controller/traffic_controller.hpp
+color.hpp
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/controller/color.hpp
+
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/controller/traffic_controller.hpp
+fstream
+-
+string
+-
+vector
+-
+traffic_light.hpp
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/controller/traffic_light.hpp
+
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/controller/traffic_light.cpp
+traffic_light.hpp
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/controller/traffic_light.hpp
+
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/controller/traffic_light.hpp
+fstream
+-
+string
+-
+color.hpp
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/controller/color.hpp
+

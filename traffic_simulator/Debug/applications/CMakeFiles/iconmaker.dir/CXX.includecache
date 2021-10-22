@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../controller/color.hpp
+string
+-
+vector
+-
+
+../pngwriter/pngwriter.hpp
+png.h
+-
+zlib.h
+-
+ft2build.h
+-
+iostream
+-
+string
+-
+ios
+-
+cmath
+-
+cwchar
+-
+cstring
+-
+cstdlib
+-
+cstdio
+-
+csetjmp
+-
+
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/applications/iconmaker.cpp
+controller/color.hpp
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/applications/controller/color.hpp
+pngwriter/pngwriter.hpp
+/home/mac568/Smart-Traffic-Lights/traffic_simulator/applications/pngwriter/pngwriter.hpp
+

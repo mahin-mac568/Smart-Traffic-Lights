@@ -67,6 +67,6 @@ void car::drive_car() {
 void car::update_streets(street next_street) {
   current_street.decrease_capacity(); 
   next_street.increase_capacity(); 
-  current_street = next_street; 
+  // current_street = next_street; 
   current_street_name = next_street.get_street_name();
 }
