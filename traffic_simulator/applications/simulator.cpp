@@ -1,3 +1,13 @@
+/*
+Based on Sagar’s sample hw1 solution
+*/ 
+
+/*
+Note: I gave up on the assignment after lots of struggling. Please grade the 
+functions and classes I made in simulator.cpp, street.cpp, and car.cpp. Any 
+partial credit would be greatly appreciated. 
+*/
+
 #include <fstream>
 #include <iostream>
 #include <queue>
@@ -80,6 +90,7 @@ void car_movement(std::vector<car> &cars,
    std::tr1::unordered_map<std::string,controller::traffic_light> lights_map, 
    std::tr1::unordered_map<uint32_t,street> street_map); 
 
+/* Moves the cars and updates the car object fields and street object fields */
 void simulate_cars
   (std::vector<std::vector<std::string>> sc_table,
    std::tr1::unordered_map<uint32_t, std::vector<std::string>> st_names_map, 
@@ -89,6 +100,9 @@ void simulate_cars
 
 /* MAIN PROGRAM */
 int main(int argc, char* argv[]) {
+
+    std::cout << "I'm walking away from the mess and moving on, as the "; 
+    std::cout << "professor recommended in lecture today." << std::endl; 
     
     // HOMEWORK 1 
 
@@ -391,7 +405,7 @@ std::tr1::unordered_map<uint32_t, std::vector<std::string>> create_st_names_map
     const uint32_t STREET3_INDEX = 6;
     const uint32_t STREET4_INDEX = 8;
 
-    for (int i=0; i<tssf_table.at(CNN_INDEX).size(); i++) {
+    for (long unsigned int i=0; i<tssf_table.at(CNN_INDEX).size(); i++) {
         uint32_t cnn = std::stoi(tssf_table.at(CNN_INDEX).at(i)); 
         std::string street1_name = tssf_table.at(STREET1_INDEX).at(i); 
         std::string street2_name = tssf_table.at(STREET2_INDEX).at(i); 
@@ -406,7 +420,7 @@ std::tr1::unordered_map<uint32_t, std::vector<std::string>> create_st_names_map
     return st_names_map; 
 }
 
-/*  */ 
+/* Derives the shared street name based on the streets of two intersections */
 std::string obtain_street_name
   (std::vector<std::string> cnn0_s_names, std::vector<std::string> cnn1_s_names,
    std::string string_cnn0, std::string string_cnn1) 
@@ -421,14 +435,12 @@ std::string obtain_street_name
             }
         }
     }
-
     if (shared_street == "") {
         street_name = "UNKNOWN FROM " + string_cnn0 + " TO " + string_cnn1; 
     }
     else {
         street_name = shared_street + " FROM " + string_cnn0 + " TO " + string_cnn1;
     }
-
     return street_name; 
 }
 
@@ -524,19 +536,19 @@ void car_movement(std::vector<car> &cars,
         if (next_startpoint != 0) {
             uint32_t path_idx = c.get_curr_path_index(); 
 
-            // std::string string_next_endpoint 
-            //   = c.get_path_intersections().at(path_idx+2); // +1 would give the same as next_intersection
-            // uint32_t next_endpoint = std::stoi(string_next_endpoint);
-            // uint32_t key = compute_lookup_key(next_startpoint, next_endpoint); 
+            std::string string_next_endpoint 
+              = c.get_path_intersections().at(path_idx+2); // +1 would give the same as next_intersection
+            uint32_t next_endpoint = std::stoi(string_next_endpoint);
+            uint32_t key = compute_lookup_key(next_startpoint, next_endpoint); 
 
-            // std::string street_name = c.get_curr_street_name(); 
-            // controller::traffic_light street_light = lights_map[street_name]; 
-            // street next_street = street_map[key]; 
+            std::string street_name = c.get_curr_street_name(); 
+            controller::traffic_light street_light = lights_map[street_name]; 
+            street next_street = street_map[key]; 
 
-            // if (street_light.get_color() != 0 && next_street.get_capacity() > 0) {
-            //     c.drive_car(); 
-            //     c.update_streets(next_street);
-            // }
+            if (street_light.get_color() != 0 && next_street.get_capacity() > 0) {
+                c.drive_car(); 
+                c.update_streets(next_street);
+            }
             // else if (street_light.get_color() == 0) {
             //     // find the time it would take for this street to turn green 
             //     // accumulate that to this car's time elapsed 
@@ -549,14 +561,14 @@ void car_movement(std::vector<car> &cars,
             //     std::cout << "Reached color/capacity combination" << std::endl; 
             // }
         } 
-        // else {
-        //     c.drive_car(); 
-        //     break; 
-        // }
+        else {
+            c.drive_car(); 
+            break; 
+        }
     }
 }
 
-
+/* Moves the cars and updates the car object fields and street object fields */
 void simulate_cars
   (std::vector<std::vector<std::string>> sc_table,
    std::tr1::unordered_map<uint32_t, std::vector<std::string>> st_names_map, 

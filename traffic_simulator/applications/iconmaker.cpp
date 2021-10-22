@@ -1,3 +1,7 @@
+/*
+Based on Sagar’s sample hw1 solution
+*/ 
+
 #include "controller/color.hpp"
 #include "pngwriter/pngwriter.hpp"
 

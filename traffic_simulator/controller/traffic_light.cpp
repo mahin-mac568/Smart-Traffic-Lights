@@ -1,3 +1,7 @@
+/*
+Based on Sagar’s sample hw1 solution
+*/ 
+
 #include "traffic_light.hpp"
 
 namespace controller {

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Based on Sagar’s sample hw1 solution
+
 mkdir -p Release
 cd Release
 cmake -DCMAKE_BUILD_TYPE=Release ..

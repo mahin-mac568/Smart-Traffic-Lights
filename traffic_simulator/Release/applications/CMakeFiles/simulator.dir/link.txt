@@ -1,1 +1,0 @@
-/usr/bin/c++  -O3 -DNDEBUG -O3 -Wall  -rdynamic CMakeFiles/simulator.dir/event.cpp.o CMakeFiles/simulator.dir/simulator.cpp.o  -o ../bin/simulator  -Wl,-rpath,/home/mac568/Smart-Traffic-Lights/traffic_simulator/Release/lib ../lib/libcsv_reader.so ../lib/libcontroller.so 

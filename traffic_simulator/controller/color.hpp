@@ -1,3 +1,7 @@
+/*
+Based on Sagar’s sample hw1 solution
+*/ 
+
 #pragma once
 
 #include <string>

@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -O3 -DNDEBUG -O3 -Wall  -shared -Wl,-soname,libpngwriter.so -o ../lib/libpngwriter.so CMakeFiles/pngwriter.dir/pngwriter.cpp.o  -lpng -lz 

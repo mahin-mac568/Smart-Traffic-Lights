@@ -1,3 +1,7 @@
+/*
+Based on Sagar’s sample hw1 solution
+*/ 
+
 #include "event.hpp"
 
 event::event(const uint32_t controller_index, const uint32_t time)
