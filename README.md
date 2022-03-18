@@ -5,7 +5,7 @@
 ```bash
 ssh mac568@ugclinux.cs.cornell.edu
 ```
-### 2. Navigate to MapReduce folder
+### 2. Navigate to program folder
 ```
 cd Smart-Traffic-Lights
 cd traffic_simulator
